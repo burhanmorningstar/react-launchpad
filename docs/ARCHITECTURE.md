@@ -1,4 +1,88 @@
-# 🏗️ Mimari Analiz Raporu
+# Frontend Launchpad mimarisi
+
+Güncel sözleşme: 27 Ekim 2026, Görev 3.
+
+## Modül sınırları
+
+`app` route/layout/provider birleşimini yapar. `core` tekrar kullanılabilir
+altyapıdır; `app` veya `features` import edemez. Feature'lar `app` import edemez;
+başka bir feature'ı yalnız kökündeki `index.ts` / `index.tsx` public API'si
+üzerinden kullanabilir. Aynı feature'ın kendi iç dosyaları serbesttir.
+`shared`, `app`, `core` veya `features` import edemez. Proje ayarları
+`src/config` altında, bütün katmanlardan kullanılabilir.
+
+`pnpm check:boundaries`, TypeScript AST ve gerçek modül çözümlemesiyle alias,
+relative path, Vite `/src/...` yolu, re-export, literal dynamic import, require ve import-type
+ifadelerini kontrol eder. `tsconfig.app.json` alias'ları (fixture'da root
+tsconfig), `.js` → `.ts` çözümü ve dosya/klasör giriş noktaları dikkate alınır.
+Çözülemeyen iç import sessizce atlanmaz. Yorumlar ve sıradan metinler import
+sayılmaz. Bu statik denetim literal import yolları içindir; çalışma anında
+hesaplanan modül adreslerini çözmez.
+
+ESLint `architecture/module-boundaries` kuralı aynı checker'ı kullanır.
+`pnpm check` içine sınır kapısı eklenmiştir; ayrıca CI lint işi bunu uygular.
+Bağımsız davranış fixture'ları `scripts/tests/boundaries.test.mjs` içindedir.
+
+## Feature route sözleşmesi
+
+Tek kayıt kaynağı `src/features/<name>/routes.tsx` dosyasıdır. Eski
+`_registry.ts` açıklama kopyası kaldırıldı. Dosya `feature` adında, core'daki
+`FeatureDefinition` tipine uyan bir değer export eder:
+
+```tsx
+// src/features/orders/routes.tsx
+import type { FeatureDefinition } from '@/core/routing/types'
+
+export const feature = {
+  id: 'orders',
+  routes: [
+    {
+      route: {
+        path: '/orders',
+        lazy: () => import('./pages/OrdersPage').then(({ OrdersPage }) => ({
+          Component: OrdersPage,
+        })),
+      },
+    },
+  ],
+  menu: [{ id: 'orders', label: 'Orders', href: '/orders' }],
+} satisfies FeatureDefinition
+```
+
+App loader'ı `import.meta.glob('../../features/*/routes.tsx')` ile tanımları
+keşfeder. Kayıt sırasında yalnız küçük route tanımları yüklenir; sayfalar
+`route.lazy` içinde kalır ve eşleşen adrese gidilene kadar import edilmez.
+Sayfa dosyasını route tanımının başında eager import etmekten kaçının.
+Feature eklemek merkez route dosyasında liste büyütmeyi gerektirmez.
+Feature'ı kaldırmak, ilgili klasörü kaldırmakla kaydı da kaldırır; hiç feature
+kalmadığında Welcome ve 404 route'ları çalışmaya devam eder.
+
+Kayıt, yinelenen feature id, route id ve normalize edilmiş route path için
+kaynak dosyalarıyla açık hata verir. İç içe yollar, index route'lar, sondaki
+slash, büyük/küçük harf ve yalnız parametre adı farklı dinamik yollar kontrol
+edilir. Starter'ın `/`, `homePath` ve kök fallback adresleri rezerve edilir.
+React Router'ın diğer route yapı kuralları kendi denetiminde kalır.
+
+`mount` isteğe bağlı, app'in tanımladığı layout/guard slot'udur. Mevcut
+`guest`, `dashboard`, `admin` slot'ları `feature-layouts.tsx` içinde birleşir;
+bilinmeyen slot açık hata verir. Core bu isimlere veya oturum state'ine bağlı
+değildir. `mount` verilmezse route public olarak eklenir. Menü katkıları loader
+sonucunda döner; ortak shell'in menü tüketimi Görev 6'da tamamlanır.
+
+Eski auth/dashboard/users/settings adresleri kendi feature route dosyalarına
+taşındı; URL ve guard davranışı korundu. `example: true` tanımları
+`projectConfig.examplesEnabled=false` iken hariç tutulur; ürün feature'ları
+kayıtta kalır. Örneklerin `/examples` dalına taşınması Görev 17'dir.
+
+Kanıtlar: `src/app/router/feature-routes.test.ts`,
+`src/app/pages/WelcomePage.test.tsx`, `e2e/auth.spec.ts` ve
+`e2e/template-start.spec.ts`. Yerel test/build sonucu canlı deployment kanıtı
+değildir; güncel kapı sonuçları [baseline raporunda](quality/baseline.md).
+
+## Tarihsel mimari analizi
+
+Aşağıdaki 19 Ocak 2026 analizi önceki envanteri ve önerileri korur. Güncel
+route/import sözleşmesinde yukarıdaki Görev 3 bölümleri esas alınır.
 
 > **Proje:** React + Vite + TypeScript Boilerplate  
 > **Tarih:** 19 Ocak 2026  
@@ -84,7 +168,7 @@ boilerplate/
 │   │       ├── primitives/     # (Boş - headless UI için)
 │   │       └── theme/
 │   ├── features/               # Feature modules
-│   │   ├── _registry.ts        # Feature kayıt dosyası
+│   │   ├── <name>/routes.tsx   # Otomatik keşfedilen route tanımı
 │   │   ├── auth/
 │   │   ├── dashboard/
 │   │   ├── notifications/
@@ -311,13 +395,16 @@ export { useCreateOrder, useUpdateOrder, useDeleteOrder } from './api/mutations'
 ### Adım 6: Route Ekle
 
 ```typescript
-// src/app/router/routes.tsx
-const OrdersPage = lazy(() =>
-  import('@/features/orders').then((m) => ({ default: m.OrdersPage }))
-)
+// src/features/orders/routes.tsx
+import type { FeatureDefinition } from '@/core/routing/types'
 
-// routes array içine ekle:
-{ path: 'orders', element: <OrdersPage /> },
+export const feature = {
+  id: 'orders',
+  routes: [{ route: {
+    path: '/orders',
+    lazy: () => import('./pages/OrdersPage').then(({ OrdersPage }) => ({ Component: OrdersPage })),
+  } }],
+} satisfies FeatureDefinition
 ```
 
 ### Adım 7: i18n Çevirileri

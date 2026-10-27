@@ -172,3 +172,54 @@ başlığının hâlâ eski `t('app.name')` değerini kullanması Görev 6'ya b�
 Yeni sayfalardaki bağlantılar `buttonVariants` ile stillenir: mevcut
 `Button asChild` kullanımı `React.Children.only` hatası veriyor; primitive
 düzeltmesi Görev 5'in kapsamındadır. Bu görevde primitive API'si değiştirilmedi.
+
+## Görev 3 sonrası doğrulama — 27 Ekim 2026
+
+Route sözleşmesi `src/core/routing/types.ts` içindedir. App loader'ı
+`src/features/*/routes.tsx` dosyalarını keşfeder; sayfalar `route.lazy` ile
+ziyaret anında yüklenir. Eski `_registry.ts` kopyası kaldırıldı. Mevcut
+auth/dashboard/users/settings URL'leri ve guard'ları korundu; app'in layout
+slot'ları core'a taşınmadı. Hiç feature bulunmaması ve örneklerin kapatılması
+kayıt testlerinde geçer. Menü katkıları registry sonucunda hazırdır; shell'de
+tüketimi Görev 6'da yapılır.
+
+`pnpm check:boundaries` ve ESLint aynı TypeScript AST/modül çözümleyicisini
+kullanır. Alias, relative yol, Vite `/src/...` yolu, re-export, literal dynamic
+import, import-type, custom alias ve `.js` → `.ts` çözümü kapsanır. Core'un
+app/feature import'u ve feature'ların birbirinin iç dosyasına erişimi reddedilir;
+feature public API'si ve kendi iç import'ları geçer. Mevcut kaynakta taşınması
+gereken cross-feature iç import bulunmadı. `pnpm check` sınır kapısını içerir.
+
+Kayıtta yinelenen feature id, route id, nested/normalize path ve reserved home
+kontrol edilir. Sayfa modüllerinin ana sayfada yüklenmediği, ilgili route'a
+geçilince yüklendiği gerçek memory router testiyle doğrulanır.
+
+Tarayıcıda ilk denemede doğrudan `/login` ve admin adreslerinde takılı kalan
+yükleme ekranı yakalandı. Router hazır olurken, Suspense altındaki
+`RouterProvider` henüz abone olmadığı için ilk state güncellemesini
+kaçırıyordu. App, ilk router state'i hazır olduktan sonra provider'ı mount
+eder. Aynı gerçek tarayıcı testleri düzeltmeden önce kırmızı, sonra yeşil oldu;
+timeout artırılarak geçirilmedi.
+
+Bağımsız incelemedeki tek önemli bulgu, Vite root-absolute import'larının
+sınır denetimini atlamasıydı. `/src/features/...` fixture'ı önce başarısız
+oldu; proje köküne göre çözüm eklendikten sonra geçti. Ertelenen yeni bulgu yok.
+
+| Kontrol | Güncel sonuç |
+| --- | --- |
+| `pnpm check:boundaries` | Geçti |
+| `pnpm typecheck` | Geçti |
+| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
+| `pnpm test:unit` | 5 dosyada 24/24 geçti |
+| `pnpm test:tooling` | 14 sınır + 8 typecheck = 22/22 geçti |
+| `pnpm build` | Geçti |
+| `pnpm build-storybook` | Geçti |
+| Geliştirme Chromium E2E | 6/6 geçti |
+| Production preview Chromium + mobile-chrome E2E | 12/12 geçti |
+| `pnpm format:check` | Önceden var olan biçim borcu; 145 dosyada exit 1 |
+
+Başlangıç dış istek/veri/console/pageerror/service worker kontrolleri yeşil
+kaldı. Yeni auth E2E; giriş formunu ve `/dashboard`, `/admin/users`,
+`/admin/settings` adreslerinin girişe dönüşünü içerik seviyesinde kontrol eder.
+Canlı backend veya gerçek auth hizmeti doğrulanmadı. Ham kayıtlar
+`.tmp/task-3/` altında; kullanım sözleşmesi [mimari rehberde](../ARCHITECTURE.md).

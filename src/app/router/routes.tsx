@@ -2,22 +2,26 @@ import { Navigate } from 'react-router'
 
 import { projectConfig } from '@/config/project'
 import type { ProjectConfig } from '@/config/project'
+import type { FeatureRouteContribution } from '@/core/routing/types'
 
-import { exampleRoutes } from './example-routes'
+import { composeFeatureRoutes } from './feature-layouts'
 import { RootLayout } from '../layouts/RootLayout'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { RouteErrorPage } from '../pages/RouteErrorPage'
 import { WelcomePage } from '../pages/WelcomePage'
+import { PageLoader } from '../providers/PageLoader'
 
 import type { RouteObject } from 'react-router'
 
 export function createRoutes(
-  config: ProjectConfig = projectConfig
+  config: ProjectConfig = projectConfig,
+  contributions: readonly FeatureRouteContribution[] = []
 ): RouteObject[] {
   return [
     {
       path: '/',
       element: <RootLayout />,
+      hydrateFallbackElement: <PageLoader />,
       errorElement: <RouteErrorPage homePath={config.homePath} />,
       children: [
         ...(config.homePath === '/'
@@ -32,11 +36,9 @@ export function createRoutes(
                 element: <WelcomePage config={config} />,
               },
             ]),
-        ...(config.examplesEnabled ? exampleRoutes : []),
+        ...composeFeatureRoutes(contributions),
         { path: '*', element: <NotFoundPage homePath={config.homePath} /> },
       ],
     },
   ]
 }
-
-export const routes = createRoutes()

@@ -1,11 +1,28 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
 import { projectConfig } from '@/config/project'
 
 import { AppProviders } from '../providers'
-import { createRoutes, routes } from '../router/routes'
+import { loadFeatureRoutes } from '../router/feature-routes'
+import { createRoutes } from '../router/routes'
+
+import type { RouteObject } from 'react-router'
+
+let routes: RouteObject[]
+beforeAll(async () => {
+  const registered = await loadFeatureRoutes()
+  routes = createRoutes(projectConfig, registered.routes)
+})
 
 beforeEach(() => {
   vi.stubGlobal('matchMedia', (query: string) => ({
@@ -132,7 +149,9 @@ describe('backend-free starter', () => {
 
   it('keeps the existing protected examples behind login', async () => {
     const router = openPage('/dashboard')
-    await waitFor(() => expect(router.state.location.pathname).toBe('/login'))
+    await waitFor(() => expect(router.state.location.pathname).toBe('/login'), {
+      timeout: 4000,
+    })
     router.dispose()
   })
 })

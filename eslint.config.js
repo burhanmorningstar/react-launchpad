@@ -11,6 +11,8 @@ import tseslint from 'typescript-eslint'
 import importPlugin from 'eslint-plugin-import'
 import prettierConfig from 'eslint-config-prettier'
 
+import { boundaryRule } from './scripts/check-boundaries.mjs'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default tseslint.config(
@@ -49,6 +51,7 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
+      architecture: { rules: { 'module-boundaries': boundaryRule } },
       'react-refresh': reactRefresh,
       import: importPlugin,
     },
@@ -90,19 +93,7 @@ export default tseslint.config(
         },
       ],
 
-      // Import boundaries - No cross-feature imports
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features/*/*'],
-              message:
-                'Do not import directly from feature internals. Use the feature barrel export (index.ts) instead.',
-            },
-          ],
-        },
-      ],
+      'architecture/module-boundaries': 'error',
 
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': [
@@ -116,71 +107,6 @@ export default tseslint.config(
 
       // General rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-    },
-  }, // Feature-specific rules to prevent cross-feature imports
-  {
-    files: ['src/features/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features/*/*'],
-              message:
-                'Features cannot import from other feature internals. Use core or shared instead.',
-            },
-            {
-              group: ['@/app/*'],
-              message: 'Features cannot import from app layer.',
-            },
-          ],
-        },
-      ],
-    },
-  }, // Core layer rules - no feature or app imports
-  {
-    files: ['src/core/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features/*', '@/features/**'],
-              message: 'Core cannot import from features.',
-            },
-            {
-              group: ['@/app/*'],
-              message: 'Core cannot import from app layer.',
-            },
-          ],
-        },
-      ],
-    },
-  }, // Shared layer rules - no other layer imports
-  {
-    files: ['src/shared/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features/*', '@/features/**'],
-              message: 'Shared cannot import from features.',
-            },
-            {
-              group: ['@/core/*', '@/core/**'],
-              message: 'Shared cannot import from core.',
-            },
-            {
-              group: ['@/app/*'],
-              message: 'Shared cannot import from app layer.',
-            },
-          ],
-        },
-      ],
     },
   },
   // Disable react-refresh/only-export-components for context files and files that export both components and utilities

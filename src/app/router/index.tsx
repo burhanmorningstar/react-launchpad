@@ -1,11 +1,33 @@
+import { use } from 'react'
+
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
-import { routes } from './routes'
+import { projectConfig } from '@/config/project'
 
-const router = createBrowserRouter(routes)
+import { loadFeatureRoutes } from './feature-routes'
+import { createRoutes } from './routes'
+
+const routerPromise = loadFeatureRoutes(undefined, {
+  examplesEnabled: projectConfig.examplesEnabled,
+  reservedPaths: ['/', projectConfig.homePath, '/*'],
+}).then(async ({ routes }) => {
+  const router = createBrowserRouter(createRoutes(projectConfig, routes))
+  // A lazy initial match can settle before a suspended RouterProvider commits
+  // its subscription. Mount it with the ready snapshot to avoid losing that
+  // first update (and leaving a direct /login visit on the loading screen).
+  if (!router.state.initialized) {
+    await new Promise<void>((resolve) => {
+      const unsubscribe = router.subscribe((state) => {
+        if (state.initialized) {
+          unsubscribe()
+          resolve()
+        }
+      })
+    })
+  }
+  return router
+})
 
 export function AppRouter() {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={use(routerPromise)} />
 }
-
-export type { FeatureRoute, RouteMeta } from './types'
