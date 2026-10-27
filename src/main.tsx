@@ -3,7 +3,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { App } from '@/app/App'
-import { reportWebVitals } from '@/core/performance'
+import { projectConfig } from '@/config/project'
 
 import '@/styles/globals.css'
 
@@ -15,6 +15,9 @@ async function enableMocking() {
   }
 }
 
+document.title = projectConfig.name
+document.documentElement.lang = projectConfig.defaultLocale
+
 enableMocking().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -22,6 +25,3 @@ enableMocking().then(() => {
     </StrictMode>
   )
 })
-
-// Report Web Vitals metrics
-reportWebVitals()

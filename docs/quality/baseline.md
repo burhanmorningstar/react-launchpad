@@ -117,3 +117,58 @@ Yeniden çalıştırma: `pnpm install --frozen-lockfile`, `pnpm check`,
 `pnpm build`, `pnpm build-storybook`. `check` ilk hatada durduğu için
 `pnpm test:unit` ve `pnpm test:tooling` kırmızı biçim kapısı kapanana kadar
 ayrıca çalıştırılmalıdır.
+
+## Görev 2 sonrası doğrulama — 27 Ekim 2026
+
+Bu bölüm, yukarıdaki Görev 1 ölçümünü tarihsel kayıt olarak korur; güncel
+durumda değişen kapıları belirtir.
+
+- Varsayılan `/` route'u artık backend, hesap, API anahtarı veya `.env`
+  gerektirmeyen Welcome ekranıdır. Bilinmeyen route için 404; render hatası
+  için özel bilgi göstermeyen, ana sayfaya dönüşlü hata ekranı vardır.
+- `src/config/project.ts`: isim, marka, varsayılan locale, `homePath`,
+  `examplesEnabled` ve isteğe bağlı public API adresi. İki mevcut HTTP
+  istemcisi aynı `apiUrl` ayarını tüketir; transport birleştirmesi Görev 12'de.
+  Boş/eksik/yalnız boşluk içeren API env değeri artık başlangıcı bozmaz.
+- Eski korumalı örnek route'lar `example-routes.tsx` içinde korunur;
+  layout ve sayfaları lazy'dir. Örnekler kapatıldığında route'ları da kalkar.
+  Özelleştirilmiş marka/ana yol ve örneksiz kurulum unit testinde doğrulandı.
+- Tema mevcut Zustand kaynağında kalır; tema senkronizasyonu, i18n, query,
+  auth, tooltip ve toast birleşimi `AppProviders` içindedir. Görev 4 öncesinde
+  ikinci bir tema state'i eklenmedi. Varsayılan performans overlay'i kaldırıldı;
+  performans yardımcıları isteğe bağlı kullanım için korunur.
+- PWA yalnız açık `VITE_PWA_ENABLED=true` tercihiyle eklenir. Varsayılan build
+  service worker üretmez/kaydetmez; Sentry/PostHog başlangıcı yapılmaz.
+  Bu değişiklik, önceki Storybook Workbox boyut hatasını da giderdi.
+
+| Kontrol | Güncel sonuç |
+| --- | --- |
+| `pnpm typecheck` | Geçti |
+| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
+| `pnpm test:unit` | 4 dosyada 15/15 geçti |
+| `pnpm test:tooling` | 8/8 geçti |
+| `pnpm build` | Geçti; varsayılan çıktıda service worker yok |
+| `pnpm build-storybook` | Geçti |
+| `pnpm exec playwright test --project=chromium` | Geliştirme sunucusunda 5/5 geçti |
+| `PLAYWRIGHT_PREVIEW=true pnpm exec playwright test --project=chromium --project=mobile-chrome --workers=2` | Üretim build'inin yerel preview'ında 10/10 geçti |
+| `pnpm format:check` | Mevcut biçim borcu nedeniyle exit 1; 148 dosya kaldı |
+
+Yeni başlangıç testi; ilk açılış, yenileme, 404 ve ana sayfaya dönüş boyunca
+dış origin girişimlerini, aynı origin dahil fetch/XHR/veri isteklerini,
+HTTP hatalarını, konsol uyarı/hatalarını ve pageerror olaylarını denetler.
+Dev ile production preview'da bunlar boş; service worker kaydı 0 bulundu.
+Masaüstü ve mobil Welcome ekran görüntüleri ayrıca gözle incelendi.
+Firefox/WebKit, canlı deployment ve erişilebilirlik sertifikası bu kanıtın
+parçası değildir. Playwright config'ine preview seçeneği eklendi; başka bir
+yerel sunucuyu yanlışlıkla test etmemek için test sunucusu yeniden kullanılmaz.
+
+TDD kaydı: İlk koşuda 6 beklenen unit hata / 2 geçen mevcut davranış vardı;
+başlangıç E2E'si eski giriş yönlendirmesinde başarısız oldu. Ek bir test,
+HTTP istemcisinin proje ayarını kullanmadığını göstererek önce başarısız oldu;
+istemciler bağlandıktan sonra geçti. Ham kayıtlar `.tmp/task-2/` altındadır.
+
+Kod incelemesinde önemli/kritik bulgu yok. Küçük bulgu olarak korunan dashboard
+başlığının hâlâ eski `t('app.name')` değerini kullanması Görev 6'ya bırakıldı.
+Yeni sayfalardaki bağlantılar `buttonVariants` ile stillenir: mevcut
+`Button asChild` kullanımı `React.Children.only` hatası veriyor; primitive
+düzeltmesi Görev 5'in kapsamındadır. Bu görevde primitive API'si değiştirilmedi.

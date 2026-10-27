@@ -23,7 +23,7 @@
 
 import createClient from 'openapi-fetch'
 
-import { env } from '@/config/env'
+import { projectConfig } from '@/config/project'
 
 import type { paths } from './schema'
 
@@ -32,7 +32,7 @@ import type { paths } from './schema'
  * Uses generated OpenAPI types for full type safety
  */
 export const api = createClient<paths>({
-  baseUrl: env.API_URL,
+  baseUrl: projectConfig.apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },

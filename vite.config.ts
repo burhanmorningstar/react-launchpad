@@ -3,79 +3,89 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { defineConfig, type PluginOption } from 'vite'
+import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ mode }) => {
+  const pwaEnabled =
+    loadEnv(mode, process.cwd(), 'VITE_').VITE_PWA_ENABLED === 'true'
   const plugins: PluginOption[] = [
     react(),
     tailwindcss(),
-    // PWA Support
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'Boilerplate App',
-        short_name: 'Boilerplate',
-        description: 'Production-grade React + TypeScript boilerplate',
-        theme_color: '#3b82f6',
-        background_color: '#ffffff',
-        display: 'standalone',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
-      workbox: {
-        // Cache strategies
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/api\..*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24, // 24 hours
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+    // Service worker registration and caching are explicitly opt-in.
+    ...(pwaEnabled
+      ? [
+          VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: [
+              'favicon.ico',
+              'apple-touch-icon.png',
+              'mask-icon.svg',
+            ],
+            manifest: {
+              name: 'Boilerplate App',
+              short_name: 'Boilerplate',
+              description: 'Production-grade React + TypeScript boilerplate',
+              theme_color: '#3b82f6',
+              background_color: '#ffffff',
+              display: 'standalone',
+              icons: [
+                {
+                  src: 'pwa-192x192.png',
+                  sizes: '192x192',
+                  type: 'image/png',
+                },
+                {
+                  src: 'pwa-512x512.png',
+                  sizes: '512x512',
+                  type: 'image/png',
+                },
+                {
+                  src: 'pwa-512x512.png',
+                  sizes: '512x512',
+                  type: 'image/png',
+                  purpose: 'any maskable',
+                },
+              ],
             },
-          },
-          {
-            urlPattern: /\.(png|jpg|jpeg|svg|gif|webp)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'image-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-              },
+            workbox: {
+              // Cache strategies
+              runtimeCaching: [
+                {
+                  urlPattern: /^https:\/\/api\..*/i,
+                  handler: 'NetworkFirst',
+                  options: {
+                    cacheName: 'api-cache',
+                    expiration: {
+                      maxEntries: 100,
+                      maxAgeSeconds: 60 * 60 * 24, // 24 hours
+                    },
+                    cacheableResponse: {
+                      statuses: [0, 200],
+                    },
+                  },
+                },
+                {
+                  urlPattern: /\.(png|jpg|jpeg|svg|gif|webp)$/,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'image-cache',
+                    expiration: {
+                      maxEntries: 50,
+                      maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                    },
+                  },
+                },
+              ],
+              // Don't cache during development
+              disableDevLogs: true,
             },
-          },
-        ],
-        // Don't cache during development
-        disableDevLogs: true,
-      },
-      devOptions: {
-        enabled: false, // Disable in dev for faster builds
-      },
-    }),
+            devOptions: {
+              enabled: false, // Disable in dev for faster builds
+            },
+          }),
+        ]
+      : []),
   ]
 
   // Bundle analyzer - generates report on build

@@ -1,6 +1,8 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
+import { projectConfig } from '@/config/project'
+
 import enCommon from './locales/en/common.json'
 import enUsers from './locales/en/users.json'
 import trCommon from './locales/tr/common.json'
@@ -20,7 +22,7 @@ export const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'en',
+  lng: projectConfig.defaultLocale,
   fallbackLng: 'en',
   defaultNS,
   interpolation: {

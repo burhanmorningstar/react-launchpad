@@ -2,11 +2,15 @@ import { z } from 'zod'
 
 /**
  * Environment variable schema with validation
- * Validates all required environment variables at build time
+ * Validates public runtime configuration when the app module loads.
  */
 const envSchema = z.object({
   // API
-  VITE_API_URL: z.string().url().default('http://localhost:3000/api'),
+  VITE_API_URL: z.preprocess(
+    (value) =>
+      typeof value === 'string' && value.trim() === '' ? undefined : value,
+    z.string().url().optional()
+  ),
 
   // App
   VITE_APP_NAME: z.string().default('Boilerplate'),

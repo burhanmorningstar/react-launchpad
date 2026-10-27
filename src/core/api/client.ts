@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import { STORAGE_KEYS } from '@/config/constants'
-import { env } from '@/config/env'
+import { projectConfig } from '@/config/project'
 import { logger } from '@/core/monitoring'
 
 import type { ApiError } from './types'
@@ -46,7 +46,7 @@ const createApiClient = (
   const config: RetryConfig = { ...defaultRetryConfig, ...retryConfig }
 
   const client = axios.create({
-    baseURL: env.API_URL,
+    baseURL: projectConfig.apiUrl,
     timeout: 30000,
     headers: {
       'Content-Type': 'application/json',
