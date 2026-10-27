@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '@/core/auth'
-import { useUIStore } from '@/core/store'
+import { useTheme } from '@/core/theme/useTheme'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/core/ui'
 import i18n from '@/i18n'
 
 export function SettingsPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { theme, setTheme } = useUIStore()
+  const { theme, setTheme } = useTheme()
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang)

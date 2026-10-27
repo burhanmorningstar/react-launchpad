@@ -223,3 +223,75 @@ kaldı. Yeni auth E2E; giriş formunu ve `/dashboard`, `/admin/users`,
 `/admin/settings` adreslerinin girişe dönüşünü içerik seviyesinde kontrol eder.
 Canlı backend veya gerçek auth hizmeti doğrulanmadı. Ham kayıtlar
 `.tmp/task-3/` altında; kullanım sözleşmesi [mimari rehberde](../ARCHITECTURE.md).
+
+## Görev 4 sonrası doğrulama — 27 Ekim 2026
+
+Tema seçiminin tek sahibi next-themes tabanlı `src/core/theme/ThemeProvider.tsx`.
+`useTheme` seçimi, çözümlenmiş light/dark görünümü ve `setTheme` işlemini sunar;
+`ThemeMode` light/dark/system sözleşmesidir. Zustand UI store'undan tema,
+persist katmanı ve eski `useThemeSync` kaldırıldı. Switcher, toggle, ayarlar
+ekranı ve toast aynı provider'ı tüketir.
+
+Canonical localStorage anahtarı `theme` olur. Geçerli eski `ui-storage` tercihi
+yalnız canonical değer yokken taşınır; eski kayıt veya ilgisiz kullanıcı
+storage verisi silinmez. Bozuk değer, storage erişiminin reddi ve salt okunur
+storage güvenli fallback ile çalışır; seçim bellekte de değiştirilebilir.
+Başlangıcın bozulmaması için auth provider'ın ilk storage okumasına da dar
+bir hata sınırı eklendi; gerçek auth hizmeti veya oturum sözleşmesi değiştirilmedi.
+
+Vite, `initialize-theme.ts` içindeki aynı fonksiyonu HTML'in charset metası
+sonrasına inline eder. Böylece React yüklenmeden doğru class/color-scheme
+uygulanır; başlangıç ve React için farklı tema algoritmaları tutulmaz.
+İlk-çerçeve testinde uygulama JavaScript'i bekletilir ve üç animation frame'de
+class kontrol edilir. System, light, dark, geçersiz ve engelli storage
+durumları; normal açılış ve refresh ile doğrulandı. Bu, ölçülen tarayıcı
+senaryolarının kanıtıdır; bütün cihazlarda fiziksel ekran sertifikası değildir.
+
+`tokens.css` tek semantik renk/ölçü/motion kaynağıdır. `globals.css` shadcn ve
+eski utility adlarını bu değerlere bağlar; eski adlarda ikinci renk paleti yoktur.
+Renk, radius, font, spacing, density, shadow ve motion buradan değiştirilir.
+Default/small/large button ve input/select yükseklikleri density token'larını
+tüketir. Hover, disabled opacity ve solid focus ring token'lara bağlıdır;
+primitive API değişimi ve mevcut `asChild` sorunu Görev 5'te kalır.
+
+`typography.css`, yerel Inter Variable WOFF2'yi ve sistem font fallback'lerini
+tanımlar. Font [Inter'in kendi deposundan](https://github.com/rsms/inter/tree/master/docs/font-files)
+alındı; SIL OFL 1.1 lisansı fontun yanında bulunur. Runtime font/CDN isteği yoktur.
+352240 byte font dosyasının SHA-256 değeri:
+`693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3`.
+
+Tarayıcı testleri light/dark için dokuz semantik metin/zemin çiftinde en az
+4.5:1 kontrast, yerel font yükleme, primary değişiminin buton ve focus'a
+yansıması, density değişiminin kontrol yüksekliğine etkisi, reduced-motion
+ve 360 px'de uzun metnin taşmamasını doğrular. Bunlar WCAG sertifikası değildir;
+tam görsel/klavye/erişilebilirlik kabulü Görev 21'de sürer.
+
+`Foundation/Theme` light/dark/system story'leri eklendi. Üretilen Storybook
+yerel statik sunucuda açıldı; light/dark geçişleri çalıştırıldı, iki ekran
+görüntüsü gözle karşılaştırıldı. Yeni dependency veya global font kurulmadı.
+
+Bağımsız inceleme, bozuk salt okunur kayıttan kurtulurken system modunun DOM'a
+işletim sistemi değişimini uygulamadığını buldu. Regresyon önce başarısız oldu;
+geçici guard kaldırılmadan next-themes'in bellek tercihi onarıldıktan sonra
+geçti. İkinci canlı tema state'i veya ayrı DOM senkronizasyon hook'u eklenmedi.
+
+| Kontrol | Güncel sonuç |
+| --- | --- |
+| `pnpm typecheck`, `pnpm check:boundaries` | Geçti |
+| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
+| `pnpm test:unit` | 7 dosyada 35/35 geçti |
+| `pnpm test:tooling` | 22/22 geçti |
+| `pnpm build`, `pnpm build-storybook` | Geçti |
+| Dev Chromium, tek worker / CI'ya eşdeğer sıra | 14/14 geçti |
+| Production preview Chromium + mobile-chrome, iki worker | 28/28 geçti |
+| `pnpm format:check` | Önceden var olan biçim borcu; 134 dosyada exit 1 |
+
+Paralel build'lerle aynı anda iki worker dev koşusunda
+`Authentication › should load login page` beş saniyelik görünürlük sınırını
+aşıp Loading ekranında zaman aşımı yaptı. İzole, tek worker'lı tam dev koşusu
+aynı assertion ve timeout ile geçti; production preview iki worker ile geçti.
+Bu paralel dev zamanlaması kapanmış bir performans garantisi sayılmaz;
+fixture/çalıştırma kararlılığı Görev 21'de yeniden değerlendirilir.
+
+Ham kayıtlar `.tmp/task-4/` altında. Font, CSS ve bootstrap dahil varsayılan
+backend'siz başlangıç dış istek/veri/console/pageerror/SW kontrolleri yeşil kaldı.

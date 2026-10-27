@@ -1,0 +1,112 @@
+/* Edit these semantic values to brand the whole starter. Legacy utility names
+   in globals.css are aliases of this map, never a second palette. */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --primary-hover: color-mix(in srgb, var(--primary) 88%, var(--foreground));
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  --secondary-hover: color-mix(
+    in srgb,
+    var(--secondary) 88%,
+    var(--foreground)
+  );
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #e2e8f0;
+  --accent-foreground: var(--foreground);
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --success: #166534;
+  --success-foreground: #ffffff;
+  --warning: #92400e;
+  --warning-foreground: #ffffff;
+  --info: #1e40af;
+  --info-foreground: #ffffff;
+  --border: #cbd5e1;
+  --border-hover: #94a3b8;
+  --input: #64748b;
+  --ring: var(--primary);
+  --disabled-foreground: var(--muted-foreground);
+  --disabled-background: var(--muted);
+  --disabled-opacity: 0.65;
+  --chart-1: #1d4ed8;
+  --chart-2: #047857;
+  --chart-3: #b45309;
+  --chart-4: #7e22ce;
+  --chart-5: #be185d;
+  --sidebar: var(--muted);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --font-body:
+    'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-code: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --body-size: 1rem;
+  --body-leading: 1.6;
+  --radius: 0.625rem;
+  --space-unit: 0.25rem;
+  --page-gutter: 1.5rem;
+  --density: 1;
+  --control-height: calc(2.25rem * var(--density));
+  --control-height-sm: calc(2rem * var(--density));
+  --control-height-lg: calc(2.5rem * var(--density));
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.08);
+  --shadow-raised: 0 4px 12px rgb(15 23 42 / 0.12);
+  --shadow-floating: 0 12px 28px rgb(15 23 42 / 0.18);
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-slow: 300ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --popover: #1e293b;
+  --primary: #93c5fd;
+  --primary-foreground: #0f172a;
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #cbd5e1;
+  --accent: #334155;
+  --destructive: #fca5a5;
+  --destructive-foreground: #450a0a;
+  --success: #86efac;
+  --success-foreground: #052e16;
+  --warning: #fcd34d;
+  --warning-foreground: #451a03;
+  --info: #93c5fd;
+  --info-foreground: #172554;
+  --border: #475569;
+  --border-hover: #64748b;
+  --input: #94a3b8;
+  --chart-1: #93c5fd;
+  --chart-2: #86efac;
+  --chart-3: #fcd34d;
+  --chart-4: #d8b4fe;
+  --chart-5: #f9a8d4;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-raised: 0 4px 12px rgb(0 0 0 / 0.35);
+  --shadow-floating: 0 12px 28px rgb(0 0 0 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-normal: 0ms;
+    --motion-slow: 0ms;
+  }
+}

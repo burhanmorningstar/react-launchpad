@@ -6,10 +6,23 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+import { initializeTheme } from './src/core/theme/initialize-theme'
+
 export default defineConfig(({ mode }) => {
   const pwaEnabled =
     loadEnv(mode, process.cwd(), 'VITE_').VITE_PWA_ENABLED === 'true'
   const plugins: PluginOption[] = [
+    {
+      name: 'launchpad-theme-bootstrap',
+      transformIndexHtml: {
+        order: 'pre',
+        handler: (html) =>
+          html.replace(
+            '<!-- theme-init -->',
+            `<script data-theme-bootstrap>(${initializeTheme.toString()})(window,document.documentElement)</script>`
+          ),
+      },
+    },
     react(),
     tailwindcss(),
     // Service worker registration and caching are explicitly opt-in.

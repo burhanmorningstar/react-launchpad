@@ -1,11 +1,9 @@
 import { Suspense } from 'react'
 import type { ReactNode } from 'react'
 
-import { Toaster } from 'sonner'
-
 import { AuthProvider } from '@/core/auth'
-import { useThemeSync } from '@/core/store'
-import { useUIStore } from '@/core/store/slices/uiSlice'
+import { ThemeProvider } from '@/core/theme/ThemeProvider'
+import { Toaster } from '@/core/ui/components/sonner'
 import { TooltipProvider } from '@/core/ui/components/tooltip'
 
 import { ErrorBoundary } from './ErrorBoundary'
@@ -18,22 +16,20 @@ interface AppProvidersProps {
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-  // Keep the existing store as the theme owner until the Task 4 migration.
-  useThemeSync()
-  const theme = useUIStore((state) => state.theme)
-
   return (
     <ErrorBoundary>
-      <I18nProvider>
-        <QueryProvider>
-          <AuthProvider>
-            <TooltipProvider>
-              <Suspense fallback={<PageLoader />}>{children}</Suspense>
-              <Toaster theme={theme} position="top-right" richColors />
-            </TooltipProvider>
-          </AuthProvider>
-        </QueryProvider>
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <TooltipProvider>
+                <Suspense fallback={<PageLoader />}>{children}</Suspense>
+                <Toaster position="top-right" richColors />
+              </TooltipProvider>
+            </AuthProvider>
+          </QueryProvider>
+        </I18nProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   )
 }

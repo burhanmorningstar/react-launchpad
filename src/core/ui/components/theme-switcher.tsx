@@ -1,9 +1,9 @@
 import { clsx } from 'clsx'
 
-import { useUIStore } from '@/core/store'
-import type { Theme } from '@/core/store'
+import { useTheme } from '@/core/theme/useTheme'
+import type { ThemeMode } from '@/core/theme/useTheme'
 
-const themes: { value: Theme; label: string; icon: React.ReactNode }[] = [
+const themes: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
   {
     value: 'light',
     label: 'Light',
@@ -82,13 +82,14 @@ export function ThemeSwitcher({
   variant = 'buttons',
   className,
 }: ThemeSwitcherProps) {
-  const { theme, setTheme } = useUIStore()
+  const { theme, setTheme } = useTheme()
 
   if (variant === 'dropdown') {
     return (
       <select
+        aria-label="Color theme"
         value={theme}
-        onChange={(e) => setTheme(e.target.value as Theme)}
+        onChange={(e) => setTheme(e.target.value as ThemeMode)}
         className={clsx(
           'rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary',
           'focus:outline-none focus:ring-2 focus:ring-primary',
@@ -114,9 +115,11 @@ export function ThemeSwitcher({
       {themes.map((t) => (
         <button
           key={t.value}
+          type="button"
+          aria-pressed={theme === t.value}
           onClick={() => setTheme(t.value)}
           className={clsx(
-            'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             theme === t.value
               ? 'bg-background text-text-primary shadow-sm'
               : 'text-text-secondary hover:text-text-primary'
@@ -132,30 +135,20 @@ export function ThemeSwitcher({
 }
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme } = useUIStore()
+  const { resolvedTheme, setTheme } = useTheme()
 
   const toggleTheme = () => {
-    const currentTheme =
-      theme === 'system'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light'
-        : theme
-
-    setTheme(currentTheme === 'dark' ? 'light' : 'dark')
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }
 
-  const isDark =
-    theme === 'dark' ||
-    (theme === 'system' &&
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const isDark = resolvedTheme === 'dark'
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       className={clsx(
-        'rounded-md p-2 text-text-secondary hover:bg-background-secondary hover:text-text-primary',
+        'rounded-md p-2 text-text-secondary hover:bg-background-secondary hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         className
       )}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}

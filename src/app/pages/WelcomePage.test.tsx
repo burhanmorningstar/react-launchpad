@@ -30,6 +30,8 @@ beforeEach(() => {
     media: query,
     addEventListener() {},
     removeEventListener() {},
+    addListener() {},
+    removeListener() {},
   }))
   localStorage.clear()
 })

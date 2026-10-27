@@ -19,23 +19,26 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, setState] = useState<AuthState>(() => {
-    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
-    const userJson = localStorage.getItem('user')
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+      const userJson = localStorage.getItem('user')
 
-    if (token && userJson) {
-      try {
-        const user = JSON.parse(userJson) as User
-        return {
-          user,
-          isAuthenticated: true,
-          isLoading: false,
+      if (token && userJson) {
+        try {
+          const user = JSON.parse(userJson) as User
+          return {
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+          }
+        } catch {
+          localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+          localStorage.removeItem('user')
         }
-      } catch {
-        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
-        localStorage.removeItem('user')
       }
+    } catch {
+      /* Storage is optional; an anonymous in-memory session still works. */
     }
-
     return { user: null, isAuthenticated: false, isLoading: false }
   })
 
