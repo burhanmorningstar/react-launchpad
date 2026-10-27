@@ -16,14 +16,14 @@ services:
 
   # Development mode
   dev:
-    image: node:20-alpine
+    image: node:24.20.0-alpine
     working_dir: /app
     volumes:
       - .:/app
       - /app/node_modules
     ports:
       - '5173:5173'
-    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev --host"
+    command: sh -c "corepack enable && corepack install && pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0"
     environment:
       - NODE_ENV=development
     networks:

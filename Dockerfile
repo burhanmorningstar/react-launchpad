@@ -1,21 +1,20 @@
 # Multi-stage build for production
 
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
-RUN corepack enable && corepack prepare pnpm@latest --activate
+FROM node:24.20.0-alpine AS deps
+RUN corepack enable
 WORKDIR /app
 
 # Copy dependency files
 COPY package.json pnpm-lock.yaml ./
+RUN corepack install
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: Build
-FROM node:20-alpine AS builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
+FROM deps AS builder
 WORKDIR /app
 
 # Copy dependencies and source
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build application

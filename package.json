@@ -27,9 +27,10 @@
   "private": false,
   "type": "module",
   "engines": {
-    "node": ">=20.11.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=24.20.0 <25",
+    "pnpm": "10.29.2"
   },
+  "packageManager": "pnpm@10.29.2",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -46,7 +47,10 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/check-typecheck.mjs",
+    "test:unit": "vitest run",
+    "test:tooling": "node --test scripts/tests/*.test.mjs",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:unit && pnpm test:tooling",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "generate": "plop",
