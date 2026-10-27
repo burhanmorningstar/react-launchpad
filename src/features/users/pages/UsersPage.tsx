@@ -36,7 +36,7 @@ export default function UsersPage() {
   const handleRoleFilter = (role: string) => {
     setFilters((prev) => ({
       ...prev,
-      role: role ? (role as UserRole) : undefined,
+      role: role === 'all' ? undefined : (role as UserRole),
       page: 1,
     }))
   }
@@ -44,7 +44,7 @@ export default function UsersPage() {
   const handleStatusFilter = (status: string) => {
     setFilters((prev) => ({
       ...prev,
-      status: status ? (status as UserStatus) : undefined,
+      status: status === 'all' ? undefined : (status as UserStatus),
       page: 1,
     }))
   }
@@ -66,6 +66,7 @@ export default function UsersPage() {
       <div className="flex flex-wrap gap-4">
         <div className="flex-1 min-w-50">
           <Input
+            aria-label={t('searchPlaceholder', 'Search users...')}
             placeholder={t('searchPlaceholder', 'Search users...')}
             value={filters.search || ''}
             onChange={(e) => handleSearch(e.target.value)}
@@ -73,14 +74,14 @@ export default function UsersPage() {
         </div>
         <div className="w-37.5">
           <Select
-            value={filters.role || ''}
+            value={filters.role || 'all'}
             onValueChange={(value) => handleRoleFilter(value)}
           >
-            <SelectTrigger>
+            <SelectTrigger aria-label="Filter by role">
               <SelectValue placeholder={t('filters.allRoles', 'All Roles')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
+              <SelectItem value="all">
                 {t('filters.allRoles', 'All Roles')}
               </SelectItem>
               {USER_ROLES.map((role) => (
@@ -93,16 +94,18 @@ export default function UsersPage() {
         </div>
         <div className="w-37.5">
           <Select
-            value={filters.status || ''}
+            value={filters.status || 'all'}
             onValueChange={(value) => handleStatusFilter(value)}
           >
-            <SelectTrigger>
+            <SelectTrigger
+              aria-label={t('filters.allStatuses', 'Filter by status')}
+            >
               <SelectValue
                 placeholder={t('filters.allStatuses', 'All Statuses')}
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
+              <SelectItem value="all">
                 {t('filters.allStatuses', 'All Statuses')}
               </SelectItem>
               {USER_STATUSES.map((status) => (

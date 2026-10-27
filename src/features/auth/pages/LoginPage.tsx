@@ -11,6 +11,9 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Field,
+  FieldLabel,
+  FieldError,
 } from '@/core/ui'
 
 import { loginSchema, useLoginMutation } from '../api'
@@ -40,21 +43,37 @@ export function LoginPage() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            error={errors.email?.message}
-            {...register('email')}
-          />
+          <Field data-invalid={Boolean(errors.email)}>
+            <FieldLabel htmlFor="login-email">Email</FieldLabel>
+            <Input
+              id="login-email"
+              type="email"
+              placeholder="you@example.com"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'login-email-error' : undefined}
+              {...register('email')}
+            />
+            <FieldError id="login-email-error">
+              {errors.email?.message}
+            </FieldError>
+          </Field>
 
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            error={errors.password?.message}
-            {...register('password')}
-          />
+          <Field data-invalid={Boolean(errors.password)}>
+            <FieldLabel htmlFor="login-password">Password</FieldLabel>
+            <Input
+              id="login-password"
+              type="password"
+              placeholder="Enter your password"
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby={
+                errors.password ? 'login-password-error' : undefined
+              }
+              {...register('password')}
+            />
+            <FieldError id="login-password-error">
+              {errors.password?.message}
+            </FieldError>
+          </Field>
 
           {loginMutation.error && (
             <div className="rounded-md bg-error/10 p-3 text-sm text-error">
@@ -67,7 +86,11 @@ export function LoginPage() {
             </div>
           )}
 
-          <Button type="submit" fullWidth isLoading={loginMutation.isPending}>
+          <Button
+            type="submit"
+            className="w-full"
+            loading={loginMutation.isPending}
+          >
             Login
           </Button>
 

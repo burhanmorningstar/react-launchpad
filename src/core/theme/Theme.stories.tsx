@@ -31,7 +31,10 @@ function ThemeSample() {
             Local typography, shared color tokens, and a readable keyboard focus
             ring.
           </p>
-          <Input label="Project name" placeholder="A name with room to grow" />
+          <label className="grid gap-2">
+            Project name
+            <Input placeholder="A name with room to grow" />
+          </label>
           <div className="flex flex-wrap gap-3">
             <Button>Primary action</Button>
             <Button variant="secondary">Secondary action</Button>

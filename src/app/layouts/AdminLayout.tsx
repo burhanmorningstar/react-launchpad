@@ -171,9 +171,8 @@ export function AdminLayout() {
             <Button
               variant="outline"
               size="sm"
-              fullWidth={true}
               onClick={logout}
-              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+              className="w-full border-slate-600 text-slate-300 hover:bg-slate-800"
             >
               {t('navigation.logout')}
             </Button>

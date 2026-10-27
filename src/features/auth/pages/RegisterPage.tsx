@@ -11,6 +11,9 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Field,
+  FieldLabel,
+  FieldError,
 } from '@/core/ui'
 
 import { registerSchema, useRegisterMutation } from '../api'
@@ -40,37 +43,75 @@ export function RegisterPage() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            label="Name"
-            type="text"
-            placeholder="John Doe"
-            error={errors.name?.message}
-            {...register('name')}
-          />
+          <Field data-invalid={Boolean(errors.name)}>
+            <FieldLabel htmlFor="register-name">Name</FieldLabel>
+            <Input
+              id="register-name"
+              type="text"
+              placeholder="John Doe"
+              aria-invalid={Boolean(errors.name)}
+              aria-describedby={errors.name ? 'register-name-error' : undefined}
+              {...register('name')}
+            />
+            <FieldError id="register-name-error">
+              {errors.name?.message}
+            </FieldError>
+          </Field>
 
-          <Input
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            error={errors.email?.message}
-            {...register('email')}
-          />
+          <Field data-invalid={Boolean(errors.email)}>
+            <FieldLabel htmlFor="register-email">Email</FieldLabel>
+            <Input
+              id="register-email"
+              type="email"
+              placeholder="you@example.com"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={
+                errors.email ? 'register-email-error' : undefined
+              }
+              {...register('email')}
+            />
+            <FieldError id="register-email-error">
+              {errors.email?.message}
+            </FieldError>
+          </Field>
 
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Create a password"
-            error={errors.password?.message}
-            {...register('password')}
-          />
+          <Field data-invalid={Boolean(errors.password)}>
+            <FieldLabel htmlFor="register-password">Password</FieldLabel>
+            <Input
+              id="register-password"
+              type="password"
+              placeholder="Create a password"
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby={
+                errors.password ? 'register-password-error' : undefined
+              }
+              {...register('password')}
+            />
+            <FieldError id="register-password-error">
+              {errors.password?.message}
+            </FieldError>
+          </Field>
 
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm your password"
-            error={errors.confirmPassword?.message}
-            {...register('confirmPassword')}
-          />
+          <Field data-invalid={Boolean(errors.confirmPassword)}>
+            <FieldLabel htmlFor="register-confirmPassword">
+              Confirm Password
+            </FieldLabel>
+            <Input
+              id="register-confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              aria-invalid={Boolean(errors.confirmPassword)}
+              aria-describedby={
+                errors.confirmPassword
+                  ? 'register-confirmPassword-error'
+                  : undefined
+              }
+              {...register('confirmPassword')}
+            />
+            <FieldError id="register-confirmPassword-error">
+              {errors.confirmPassword?.message}
+            </FieldError>
+          </Field>
 
           {registerMutation.error && (
             <p className="text-sm text-error">{t('errors.generic')}</p>
@@ -78,8 +119,8 @@ export function RegisterPage() {
 
           <Button
             type="submit"
-            fullWidth
-            isLoading={registerMutation.isPending}
+            className="w-full"
+            loading={registerMutation.isPending}
           >
             Register
           </Button>

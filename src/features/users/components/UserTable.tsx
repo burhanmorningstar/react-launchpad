@@ -1,10 +1,20 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useState, useRef } from 'react'
 
 import { clsx } from 'clsx'
 
-import { Button, useToast } from '@/core/ui'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+  Button,
+  useToast,
+} from '@/core/ui'
 import { DataTable } from '@/core/ui/components/DataTable'
-import { useModal } from '@/core/ui/hooks/useModal'
 
 import { useDeleteUser } from '../api'
 
@@ -39,30 +49,30 @@ export function UserTable({
   onEdit,
   onView,
 }: UserTableProps) {
-  const { openConfirm } = useModal()
+  const [pendingUser, setPendingUser] = useState<User | null>(null)
+  const deleteTrigger = useRef<HTMLButtonElement | null>(null)
+  const tableRegion = useRef<HTMLDivElement | null>(null)
+  const deletionSucceeded = useRef(false)
   const { success, error } = useToast()
   const deleteUser = useDeleteUser()
 
-  const handleDelete = useCallback(
-    (user: User) => {
-      openConfirm({
-        title: 'Delete User',
-        description: `Are you sure you want to delete ${user.firstName} ${user.lastName}? This action cannot be undone.`,
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
-        variant: 'danger',
-        onConfirm: async () => {
-          try {
-            await deleteUser.mutateAsync(user.id)
-            success('User deleted successfully')
-          } catch {
-            error('Failed to delete user')
-          }
-        },
-      })
-    },
-    [openConfirm, deleteUser, success, error]
-  )
+  const handleDelete = useCallback((user: User, trigger: HTMLButtonElement) => {
+    deleteTrigger.current = trigger
+    deletionSucceeded.current = false
+    setPendingUser(user)
+  }, [])
+
+  const confirmDelete = async () => {
+    if (!pendingUser || deleteUser.isPending) return
+    try {
+      await deleteUser.mutateAsync(pendingUser.id)
+      deletionSucceeded.current = true
+      setPendingUser(null)
+      success('User deleted successfully')
+    } catch {
+      error('Failed to delete user')
+    }
+  }
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
@@ -167,7 +177,7 @@ export function UserTable({
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
-                handleDelete(row.original)
+                handleDelete(row.original, e.currentTarget)
               }}
               className="text-error hover:text-error"
             >
@@ -181,13 +191,59 @@ export function UserTable({
   )
 
   return (
-    <DataTable
-      data={users}
-      columns={columns}
-      isLoading={isLoading}
-      enableSorting
-      enablePagination
-      emptyMessage="No users found"
-    />
+    <div ref={tableRegion} role="region" aria-label="Users table" tabIndex={-1}>
+      <DataTable
+        data={users}
+        columns={columns}
+        isLoading={isLoading}
+        enableSorting
+        enablePagination
+        emptyMessage="No users found"
+      />
+      <AlertDialog
+        open={Boolean(pendingUser)}
+        onOpenChange={(open) => {
+          if (!open && !deleteUser.isPending) setPendingUser(null)
+        }}
+      >
+        <AlertDialogContent
+          onEscapeKeyDown={(event) => {
+            if (deleteUser.isPending) event.preventDefault()
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault()
+            const target =
+              !deletionSucceeded.current && deleteTrigger.current?.isConnected
+                ? deleteTrigger.current
+                : tableRegion.current
+            target?.focus()
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {pendingUser?.firstName}{' '}
+              {pendingUser?.lastName}? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteUser.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={deleteUser.isPending}
+              aria-busy={deleteUser.isPending}
+              onClick={(event) => {
+                event.preventDefault()
+                void confirmDelete()
+              }}
+            >
+              {deleteUser.isPending ? 'Deleting…' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   )
 }

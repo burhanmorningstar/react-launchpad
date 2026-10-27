@@ -1,9 +1,11 @@
 import * as React from 'react'
 
-import { Slot } from '@radix-ui/react-slot'
+import { Slot, Slottable } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/core/ui/utils/index'
+
+import { Spinner } from './spinner'
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-[var(--disabled-opacity)] [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -40,8 +42,7 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  fullWidth?: boolean
-  isLoading?: boolean
+  loading?: boolean
 }
 
 function Button({
@@ -49,49 +50,53 @@ function Button({
   variant = 'default',
   size = 'default',
   asChild = false,
-  fullWidth = false,
-  isLoading = false,
+  loading = false,
   children,
   disabled,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : 'button'
+  const inactive = disabled || loading
+  const block: React.MouseEventHandler<HTMLElement> = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  const child =
+    asChild &&
+    inactive &&
+    React.isValidElement<React.HTMLAttributes<HTMLElement>>(children)
+      ? React.cloneElement(children, {
+          tabIndex: -1,
+          'aria-disabled': true,
+          'aria-busy': loading || children.props['aria-busy'],
+          onClickCapture: block,
+          onKeyDownCapture: (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+          },
+        })
+      : children
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        fullWidth && 'w-full'
-      )}
-      disabled={disabled || isLoading}
       {...props}
+      className={cn(buttonVariants({ variant, size, className }))}
+      disabled={asChild ? undefined : inactive}
+      aria-disabled={asChild && inactive ? true : props['aria-disabled']}
+      aria-busy={loading || undefined}
+      tabIndex={asChild && inactive ? -1 : props.tabIndex}
+      onClick={(event) => {
+        if (inactive) block(event)
+        else props.onClick?.(event)
+      }}
     >
-      {isLoading && (
-        <svg
-          className="animate-spin"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-      )}
-      {children}
+      {loading && <Spinner aria-hidden="true" role="presentation" />}
+      <Slottable>{child}</Slottable>
     </Comp>
   )
 }

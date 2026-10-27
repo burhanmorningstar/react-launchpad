@@ -44,18 +44,18 @@ yeniden indekslendiği iddia edilmez.
 
 ## Komut sonuçları
 
-| Kapı | Değişiklik öncesi | Görev 1 sonu |
-| --- | --- | --- |
-| Frozen install | Geçti | Geçti |
-| `pnpm typecheck` | Exit 0; boş kök proje nedeniyle yanıltıcı | Geçti; app, araçlar ve testler gerçekten denetleniyor |
-| `pnpm lint` | Geçti; 3 uyarı | Geçti; aynı 3 uyarı |
-| `pnpm format:check` | Başarısız; 158 dosya | Başarısız; aynı 158 dosya |
-| `pnpm test:unit` | Script yoktu; eşdeğer `pnpm exec vitest run`: 5/5 | 5/5 geçti |
-| `pnpm test:tooling` | Script yoktu; yeni fixture testi eski komutta 0/8 | 8/8 geçti |
-| `pnpm build` | Geçti | Geçti |
-| `pnpm build-storybook` | Başarısız; Workbox boyut sınırı | Aynı hata ile başarısız |
-| `pnpm check` | Script yoktu | Biçim kapısında exit 1; sonraki testler ayrıca çalıştırıldı |
-| `docker compose config --quiet` | Çalıştırılmadı | Geçti; eski `version` alanı uyarısı var |
+| Kapı                            | Değişiklik öncesi                                 | Görev 1 sonu                                                |
+| ------------------------------- | ------------------------------------------------- | ----------------------------------------------------------- |
+| Frozen install                  | Geçti                                             | Geçti                                                       |
+| `pnpm typecheck`                | Exit 0; boş kök proje nedeniyle yanıltıcı         | Geçti; app, araçlar ve testler gerçekten denetleniyor       |
+| `pnpm lint`                     | Geçti; 3 uyarı                                    | Geçti; aynı 3 uyarı                                         |
+| `pnpm format:check`             | Başarısız; 158 dosya                              | Başarısız; aynı 158 dosya                                   |
+| `pnpm test:unit`                | Script yoktu; eşdeğer `pnpm exec vitest run`: 5/5 | 5/5 geçti                                                   |
+| `pnpm test:tooling`             | Script yoktu; yeni fixture testi eski komutta 0/8 | 8/8 geçti                                                   |
+| `pnpm build`                    | Geçti                                             | Geçti                                                       |
+| `pnpm build-storybook`          | Başarısız; Workbox boyut sınırı                   | Aynı hata ile başarısız                                     |
+| `pnpm check`                    | Script yoktu                                      | Biçim kapısında exit 1; sonraki testler ayrıca çalıştırıldı |
+| `docker compose config --quiet` | Çalıştırılmadı                                    | Geçti; eski `version` alanı uyarısı var                     |
 
 Değiştirilen JSON/YAML/TypeScript/JavaScript dosyaları ayrıca doğrudan
 Prettier kontrolünden geçti. `format:check` kapsamı daraltılmadı.
@@ -90,13 +90,13 @@ değiştirilmez; fixture'lar test sonunda temizlenir.
 
 ## Açık başlangıç bulguları ve sahipleri
 
-| Bulgu | Kanıt / etkisi | Sahip görev |
-| --- | --- | --- |
-| 158 kaynak dosyasında biçim farkı | `format:check` exit 1; `check` ve CI lint kapısı kırmızı kalır | İlgili dosya taşınırken 2–20; kalan ortak biçim borcunun kapanış sahibi 21 |
-| Storybook PWA eklentisini miras alıyor | `sb-manager/globals-runtime.js` 3.15 MB; Workbox varsayılan 2 MiB sınırında build exit 1 | 2: varsayılan PWA'yı opt-in yapma; 18: katalog build kabulü |
-| Fast refresh uyarıları | `badge.tsx:47`, `breadcrumbs.tsx:123`, `button.tsx:99`; 0 lint hatası, 3 uyarı | 5: primitive API/export standardizasyonu |
-| Eski Browserslist verisi, MDX eşleşmesi yok, büyük Storybook chunk'ları | Storybook build uyarıları; mevcut major'lar yükseltilmedi | 18 ve 22 |
-| Compose üst düzey `version: '3.8'` eski | Config geçerli; Compose uyarı veriyor | 23: hosting/Docker rehberleri |
+| Bulgu                                                                   | Kanıt / etkisi                                                                           | Sahip görev                                                                |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 158 kaynak dosyasında biçim farkı                                       | `format:check` exit 1; `check` ve CI lint kapısı kırmızı kalır                           | İlgili dosya taşınırken 2–20; kalan ortak biçim borcunun kapanış sahibi 21 |
+| Storybook PWA eklentisini miras alıyor                                  | `sb-manager/globals-runtime.js` 3.15 MB; Workbox varsayılan 2 MiB sınırında build exit 1 | 2: varsayılan PWA'yı opt-in yapma; 18: katalog build kabulü                |
+| Fast refresh uyarıları                                                  | `badge.tsx:47`, `breadcrumbs.tsx:123`, `button.tsx:99`; 0 lint hatası, 3 uyarı           | 5: primitive API/export standardizasyonu                                   |
+| Eski Browserslist verisi, MDX eşleşmesi yok, büyük Storybook chunk'ları | Storybook build uyarıları; mevcut major'lar yükseltilmedi                                | 18 ve 22                                                                   |
+| Compose üst düzey `version: '3.8'` eski                                 | Config geçerli; Compose uyarı veriyor                                                    | 23: hosting/Docker rehberleri                                              |
 
 Görev 1'in kabulü araçların sabitlenmesi, gerçek hata yakalama kanıtı ve açık
 baseline listesidir. Yukarıdaki kırmızı kapıları yeşil göstermek için test
@@ -141,17 +141,17 @@ durumda değişen kapıları belirtir.
   service worker üretmez/kaydetmez; Sentry/PostHog başlangıcı yapılmaz.
   Bu değişiklik, önceki Storybook Workbox boyut hatasını da giderdi.
 
-| Kontrol | Güncel sonuç |
-| --- | --- |
-| `pnpm typecheck` | Geçti |
-| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
-| `pnpm test:unit` | 4 dosyada 15/15 geçti |
-| `pnpm test:tooling` | 8/8 geçti |
-| `pnpm build` | Geçti; varsayılan çıktıda service worker yok |
-| `pnpm build-storybook` | Geçti |
-| `pnpm exec playwright test --project=chromium` | Geliştirme sunucusunda 5/5 geçti |
-| `PLAYWRIGHT_PREVIEW=true pnpm exec playwright test --project=chromium --project=mobile-chrome --workers=2` | Üretim build'inin yerel preview'ında 10/10 geçti |
-| `pnpm format:check` | Mevcut biçim borcu nedeniyle exit 1; 148 dosya kaldı |
+| Kontrol                                                                                                    | Güncel sonuç                                         |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `pnpm typecheck`                                                                                           | Geçti                                                |
+| `pnpm lint`                                                                                                | Geçti; aynı 3 eski fast-refresh uyarısı              |
+| `pnpm test:unit`                                                                                           | 4 dosyada 15/15 geçti                                |
+| `pnpm test:tooling`                                                                                        | 8/8 geçti                                            |
+| `pnpm build`                                                                                               | Geçti; varsayılan çıktıda service worker yok         |
+| `pnpm build-storybook`                                                                                     | Geçti                                                |
+| `pnpm exec playwright test --project=chromium`                                                             | Geliştirme sunucusunda 5/5 geçti                     |
+| `PLAYWRIGHT_PREVIEW=true pnpm exec playwright test --project=chromium --project=mobile-chrome --workers=2` | Üretim build'inin yerel preview'ında 10/10 geçti     |
+| `pnpm format:check`                                                                                        | Mevcut biçim borcu nedeniyle exit 1; 148 dosya kaldı |
 
 Yeni başlangıç testi; ilk açılış, yenileme, 404 ve ana sayfaya dönüş boyunca
 dış origin girişimlerini, aynı origin dahil fetch/XHR/veri isteklerini,
@@ -205,18 +205,18 @@ Bağımsız incelemedeki tek önemli bulgu, Vite root-absolute import'larının
 sınır denetimini atlamasıydı. `/src/features/...` fixture'ı önce başarısız
 oldu; proje köküne göre çözüm eklendikten sonra geçti. Ertelenen yeni bulgu yok.
 
-| Kontrol | Güncel sonuç |
-| --- | --- |
-| `pnpm check:boundaries` | Geçti |
-| `pnpm typecheck` | Geçti |
-| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
-| `pnpm test:unit` | 5 dosyada 24/24 geçti |
-| `pnpm test:tooling` | 14 sınır + 8 typecheck = 22/22 geçti |
-| `pnpm build` | Geçti |
-| `pnpm build-storybook` | Geçti |
-| Geliştirme Chromium E2E | 6/6 geçti |
-| Production preview Chromium + mobile-chrome E2E | 12/12 geçti |
-| `pnpm format:check` | Önceden var olan biçim borcu; 145 dosyada exit 1 |
+| Kontrol                                         | Güncel sonuç                                     |
+| ----------------------------------------------- | ------------------------------------------------ |
+| `pnpm check:boundaries`                         | Geçti                                            |
+| `pnpm typecheck`                                | Geçti                                            |
+| `pnpm lint`                                     | Geçti; aynı 3 eski fast-refresh uyarısı          |
+| `pnpm test:unit`                                | 5 dosyada 24/24 geçti                            |
+| `pnpm test:tooling`                             | 14 sınır + 8 typecheck = 22/22 geçti             |
+| `pnpm build`                                    | Geçti                                            |
+| `pnpm build-storybook`                          | Geçti                                            |
+| Geliştirme Chromium E2E                         | 6/6 geçti                                        |
+| Production preview Chromium + mobile-chrome E2E | 12/12 geçti                                      |
+| `pnpm format:check`                             | Önceden var olan biçim borcu; 145 dosyada exit 1 |
 
 Başlangıç dış istek/veri/console/pageerror/service worker kontrolleri yeşil
 kaldı. Yeni auth E2E; giriş formunu ve `/dashboard`, `/admin/users`,
@@ -275,16 +275,16 @@ işletim sistemi değişimini uygulamadığını buldu. Regresyon önce başarı
 geçici guard kaldırılmadan next-themes'in bellek tercihi onarıldıktan sonra
 geçti. İkinci canlı tema state'i veya ayrı DOM senkronizasyon hook'u eklenmedi.
 
-| Kontrol | Güncel sonuç |
-| --- | --- |
-| `pnpm typecheck`, `pnpm check:boundaries` | Geçti |
-| `pnpm lint` | Geçti; aynı 3 eski fast-refresh uyarısı |
-| `pnpm test:unit` | 7 dosyada 35/35 geçti |
-| `pnpm test:tooling` | 22/22 geçti |
-| `pnpm build`, `pnpm build-storybook` | Geçti |
-| Dev Chromium, tek worker / CI'ya eşdeğer sıra | 14/14 geçti |
-| Production preview Chromium + mobile-chrome, iki worker | 28/28 geçti |
-| `pnpm format:check` | Önceden var olan biçim borcu; 134 dosyada exit 1 |
+| Kontrol                                                 | Güncel sonuç                                     |
+| ------------------------------------------------------- | ------------------------------------------------ |
+| `pnpm typecheck`, `pnpm check:boundaries`               | Geçti                                            |
+| `pnpm lint`                                             | Geçti; aynı 3 eski fast-refresh uyarısı          |
+| `pnpm test:unit`                                        | 7 dosyada 35/35 geçti                            |
+| `pnpm test:tooling`                                     | 22/22 geçti                                      |
+| `pnpm build`, `pnpm build-storybook`                    | Geçti                                            |
+| Dev Chromium, tek worker / CI'ya eşdeğer sıra           | 14/14 geçti                                      |
+| Production preview Chromium + mobile-chrome, iki worker | 28/28 geçti                                      |
+| `pnpm format:check`                                     | Önceden var olan biçim borcu; 134 dosyada exit 1 |
 
 Paralel build'lerle aynı anda iki worker dev koşusunda
 `Authentication › should load login page` beş saniyelik görünürlük sınırını
@@ -295,3 +295,47 @@ fixture/çalıştırma kararlılığı Görev 21'de yeniden değerlendirilir.
 
 Ham kayıtlar `.tmp/task-4/` altında. Font, CSS ve bootstrap dahil varsayılan
 backend'siz başlangıç dış istek/veri/console/pageerror/SW kontrolleri yeşil kaldı.
+
+## Task 5 - editable Radix/shadcn primitives (2026-10-27)
+
+The API inventory, package versions, MIT attribution and consumer migrations are
+documented in [primitives.md](../guides/primitives.md). Twenty missing primitives
+were added without switching the Radix interaction foundation. The unused custom
+Form/Modal implementations and duplicate toast wrapper were removed after consumer
+migration. React Hook Form products and advanced composites remain with their
+planned later tasks.
+
+Behavior regressions were observed failing before their fixes: slotted/loading
+buttons, the missing modal provider in user deletion, progress ARIA forwarding,
+slider thumb names, custom progress maximum, focus after a deleted row disappears,
+and explicit child attributes overriding disabled Slot behavior. The final review
+findings were fixed with regression tests. A controlled user confirmation now
+returns Cancel focus to its trigger and successful deletion focus to the persistent
+table region.
+
+| Check                                            | Result                                                                                                          |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Frozen pnpm install                              | Passed; existing blocked dependency build-script warnings unchanged                                             |
+| Typecheck and module boundaries                  | Passed                                                                                                          |
+| Lint                                             | Passed, 0 errors / 7 fast-refresh warnings; 3 existing plus shared variant/toast exports in 4 new/updated files |
+| Unit tests                                       | 49/49 across 9 files                                                                                            |
+| Tooling regression tests                         | 22/22                                                                                                           |
+| App build and Storybook build                    | Passed; Storybook retains its large-catalog chunk warning                                                       |
+| Dev Chromium, one worker                         | 14/14                                                                                                           |
+| Production preview desktop + mobile, two workers | 28/28                                                                                                           |
+| Built Storybook browser smoke                    | 51 stories, 10 interaction flows; console warnings/errors and page errors empty                                 |
+| Light/dark field screenshots at 1280 and 360 px  | Inspected; labels, invalid descriptions and disabled state fit without horizontal overflow                      |
+| Whole-source format check                        | Still fails on 110 existing files; changed source files formatted                                               |
+
+The browser smoke covers modal focus trapping, Escape/outside dismissal and focus
+return; sheet dismissal; Select keyboard/reset/disabled options; searchable
+combobox and command selection; slider keyboard/range labels; calendar single/range
+and month navigation; drawer closing; and keyboard resizing. Story play assertions
+wait for focus restoration rather than sampling during close animations. Physical
+outside-click checks wait for entry animation completion. This is local Chromium
+evidence, not a live backend or screen-reader certification. Full-catalog/a11y gates
+remain Tasks 18 and 21.
+
+Raw logs, browser results and screenshots: `.tmp/task-5/`. Graphify's existing
+1041-node graph identified the legacy component relationships; current source
+reads were used to confirm the migration because the graph predates these edits.

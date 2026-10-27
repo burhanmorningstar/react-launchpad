@@ -77,7 +77,12 @@ export function DashboardLayout() {
               <p className="font-medium text-text-primary">{user?.name}</p>
               <p className="text-text-muted">{user?.email}</p>
             </div>
-            <Button variant="outline" size="sm" fullWidth onClick={logout}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={logout}
+            >
               {t('navigation.logout')}
             </Button>
           </div>

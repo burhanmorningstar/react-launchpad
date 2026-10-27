@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
   Label,
+  FieldError,
 } from '@/core/ui'
 
 import { useUpdateUser } from '../api'
@@ -113,8 +114,14 @@ export function UserEditModal({ user, onClose, open }: UserEditModalProps) {
                 {...register('firstName', {
                   required: t('form.required', 'This field is required'),
                 })}
-                error={errors.firstName?.message}
+                aria-invalid={Boolean(errors.firstName)}
+                aria-describedby={
+                  errors.firstName ? 'firstName-error' : undefined
+                }
               />
+              <FieldError id="firstName-error">
+                {errors.firstName?.message}
+              </FieldError>
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">
@@ -125,8 +132,14 @@ export function UserEditModal({ user, onClose, open }: UserEditModalProps) {
                 {...register('lastName', {
                   required: t('form.required', 'This field is required'),
                 })}
-                error={errors.lastName?.message}
+                aria-invalid={Boolean(errors.lastName)}
+                aria-describedby={
+                  errors.lastName ? 'lastName-error' : undefined
+                }
               />
+              <FieldError id="lastName-error">
+                {errors.lastName?.message}
+              </FieldError>
             </div>
           </div>
 

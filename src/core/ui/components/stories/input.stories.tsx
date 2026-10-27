@@ -26,6 +26,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     placeholder: 'Enter text...',
+    'aria-label': 'Text',
   },
 }
 
@@ -44,12 +45,14 @@ export const Password: Story = {
   args: {
     type: 'password',
     placeholder: 'Enter password',
+    'aria-label': 'Password',
   },
 }
 
 export const Disabled: Story = {
   args: {
     placeholder: 'Disabled input',
+    'aria-label': 'Disabled input',
     disabled: true,
   },
 }
@@ -64,9 +67,10 @@ export const WithError: Story = {
         id="input-2"
         type="email"
         placeholder="you@example.com"
-        className="border-error"
+        aria-invalid="true"
+        aria-describedby="input-2-error"
       />
-      <p className="text-error text-sm mt-1">
+      <p id="input-2-error" role="alert" className="text-error text-sm mt-1">
         Please enter a valid email address
       </p>
     </div>
@@ -79,8 +83,13 @@ export const WithHelperText: Story = {
       <label htmlFor="input-3" className="block text-sm font-medium mb-2">
         Username
       </label>
-      <Input id="input-3" type="text" placeholder="johndoe" />
-      <p className="text-text-secondary text-sm mt-1">
+      <Input
+        aria-describedby="input-3-help"
+        id="input-3"
+        type="text"
+        placeholder="johndoe"
+      />
+      <p id="input-3-help" className="text-text-secondary text-sm mt-1">
         Choose a unique username for your account
       </p>
     </div>

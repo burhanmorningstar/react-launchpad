@@ -12,16 +12,20 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'outline', 'ghost', 'danger'],
+      options: [
+        'default',
+        'secondary',
+        'outline',
+        'ghost',
+        'destructive',
+        'link',
+      ],
     },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
+      options: ['sm', 'default', 'lg', 'icon', 'icon-sm', 'icon-lg'],
     },
-    isLoading: {
-      control: 'boolean',
-    },
-    fullWidth: {
+    loading: {
       control: 'boolean',
     },
     disabled: {
@@ -92,7 +96,7 @@ export const Large: Story = {
 export const Loading: Story = {
   args: {
     children: 'Loading Button',
-    isLoading: true,
+    loading: true,
   },
 }
 
@@ -106,9 +110,25 @@ export const Disabled: Story = {
 export const FullWidth: Story = {
   args: {
     children: 'Full Width Button',
-    fullWidth: true,
+    className: 'w-full',
   },
   parameters: {
     layout: 'padded',
+  },
+}
+
+export const Link: Story = {
+  render: () => (
+    <Button asChild>
+      <a href="#details">View details</a>
+    </Button>
+  ),
+}
+
+export const IconOnly: Story = {
+  args: {
+    size: 'icon',
+    'aria-label': 'Open settings',
+    children: <span aria-hidden="true">⚙</span>,
   },
 }

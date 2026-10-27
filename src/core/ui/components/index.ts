@@ -57,7 +57,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from './sheet'
-export { Toaster } from './sonner'
+export { Toaster, toast } from './sonner'
 export { Switch } from './switch'
 export {
   Table,
@@ -96,7 +96,45 @@ export {
 export { ThemeSwitcher, ThemeToggle } from './theme-switcher'
 
 // ============================================
-// Legacy Aliases (Backward Compatibility)
+// Composable primitives
 // ============================================
 
-export { Dialog as Modal } from './dialog'
+export * from './accordion'
+
+export * from './alert-dialog'
+
+export * from './button-group'
+
+export * from './calendar'
+
+export * from './collapsible'
+
+export * from './command'
+
+export * from './context-menu'
+
+export * from './drawer'
+
+export * from './hover-card'
+
+export * from './navigation-menu'
+
+export * from './pagination'
+
+export * from './progress'
+
+export * from './resizable'
+
+export * from './scroll-area'
+
+export * from './slider'
+
+export * from './toggle'
+
+export * from './toggle-group'
+
+export * from './spinner'
+
+export * from './empty'
+
+export * from './field'
