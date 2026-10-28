@@ -66,6 +66,10 @@
     "generate:locale": "node scripts/i18n/generate-locale.mjs",
     "generate:namespace": "node scripts/i18n/generate-namespace.mjs",
     "generate:api-types": "node scripts/generate-api-types.js",
+    "setup:project": "node scripts/project/setup.mjs",
+    "doctor": "node scripts/project/doctor.mjs",
+    "project:doctor": "node scripts/project/doctor.mjs",
+    "examples:remove": "node scripts/project/remove-examples.mjs",
     "cleanup": "node scripts/cleanup-features.js",
     "prepare": "husky"
   },

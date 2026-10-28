@@ -65,21 +65,38 @@ Production-grade React boilerplate with feature-based architecture, designed for
 
 ### Prerequisites
 
-- Node.js 20+
-- pnpm 9+
+- Node.js 24.20.0+
+- pnpm 10.29.2+
+
+### Project Setup & Diagnostics
+
+Run system diagnostics to verify your local runtime and environment:
+
+```bash
+pnpm doctor
+```
+
+Configure your project branding, default locale, and choose whether to keep or remove example modules:
+
+```bash
+pnpm setup:project --name my-app --display-name "My App" --locale en --examples keep
+```
+
+To remove template example screens and decouple them at any time:
+
+```bash
+pnpm examples:remove
+```
 
 ### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/Aybavs/react-launchpad.git
-cd boilerplate
+cd react-launchpad
 
 # Install dependencies
 pnpm install
-
-# Copy environment variables
-cp .env.example .env
 
 # Start development server
 pnpm dev
@@ -93,6 +110,10 @@ pnpm dev
 | `pnpm build`              | Build for production                        |
 | `pnpm build:analyze`      | Build with bundle analyzer                  |
 | `pnpm preview`            | Preview production build                    |
+| `pnpm doctor`             | Run system & template health checks         |
+| `pnpm setup:project`      | Configure branding and template options     |
+| `pnpm examples:remove`    | Remove template examples and decouple i18n  |
+| `pnpm check`              | Run all static, boundary, and test gates    |
 | `pnpm test`               | Run unit tests                              |
 | `pnpm test:ui`            | Run tests with UI                           |
 | `pnpm test:coverage`      | Run tests with coverage                     |
@@ -102,9 +123,14 @@ pnpm dev
 | `pnpm lint:fix`           | Fix lint errors                             |
 | `pnpm format`             | Format code                                 |
 | `pnpm typecheck`          | Type check                                  |
+| `pnpm check:boundaries`   | Check module boundary integrity             |
+| `pnpm check:stories`      | Check public UI Storybook coverage          |
 | `pnpm storybook`          | Start Storybook                             |
+| `pnpm build-storybook`    | Build Storybook static catalog              |
 | `pnpm generate`           | Run Plop generator                          |
-| `pnpm generate:feature`   | Generate a new feature                      |
+| `pnpm generate:feature`   | Generate a new feature module               |
+| `pnpm generate:page`      | Generate a feature page and register route  |
+| `pnpm generate:form`      | Generate a Zod form, tests, and story       |
 | `pnpm generate:component` | Generate a new component                    |
 | `pnpm generate:hook`      | Generate a new hook                         |
 | `pnpm generate:api-types` | Generate TypeScript types from OpenAPI spec |

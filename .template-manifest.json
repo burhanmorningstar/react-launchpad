@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "name": "react-launchpad",
+  "description": "Declarative inventory of template starter assets and example features",
+  "examples": {
+    "directories": ["src/features/examples", "src/examples"],
+    "files": [
+      "src/i18n/locales/en/examples.json",
+      "src/i18n/locales/tr/examples.json"
+    ],
+    "modifications": [
+      {
+        "file": "src/i18n/index.ts",
+        "description": "Remove examples locale imports and registration"
+      },
+      {
+        "file": "project.config.json",
+        "description": "Set examples.enabled to false"
+      }
+    ]
+  }
+}
