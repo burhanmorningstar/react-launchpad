@@ -21,9 +21,10 @@ export function useAppForm<
     ...rest
   } = options
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolver = schema
-    ? (zodResolver(schema as any) as Resolver<TFieldValues, TContext>)
+    ? (zodResolver(
+        schema as unknown as Parameters<typeof zodResolver>[0]
+      ) as Resolver<TFieldValues, TContext>)
     : undefined
 
   return useForm<TFieldValues, TContext>({
