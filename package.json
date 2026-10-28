@@ -71,6 +71,7 @@
     "doctor": "node scripts/project/doctor.mjs",
     "project:doctor": "node scripts/project/doctor.mjs",
     "examples:remove": "node scripts/project/remove-examples.mjs",
+    "verify:template": "node scripts/verify-template.mjs",
     "cleanup": "node scripts/cleanup-features.js",
     "prepare": "husky"
   },

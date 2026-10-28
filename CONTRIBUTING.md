@@ -6,8 +6,8 @@ First off, thank you for considering contributing! ❤️
 
 ### Prerequisites
 
-- Node.js 20+
-- pnpm 9+
+- Node.js 24.20.0+
+- pnpm 10.29.2+
 
 ### Getting Started
 
@@ -15,7 +15,7 @@ First off, thank you for considering contributing! ❤️
 
    ```bash
    git clone https://github.com/Aybavs/react-launchpad.git
-   cd boilerplate
+   cd react-launchpad
    ```
 
 2. **Install Dependencies**
