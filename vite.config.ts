@@ -115,6 +115,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    base: loadEnv(mode, process.cwd(), 'VITE_').VITE_BASE_PATH || '/',
     plugins,
     resolve: {
       alias: {
