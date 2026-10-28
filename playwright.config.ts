@@ -6,7 +6,7 @@ const baseURL = preview ? 'http://localhost:4173' : 'http://localhost:5173'
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
@@ -18,24 +18,25 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'desktop',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+      },
     },
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'tablet',
+      use: {
+        viewport: { width: 768, height: 1024 },
+      },
     },
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 12'] },
+      name: 'mobile',
+      use: {
+        viewport: { width: 360, height: 740 },
+        isMobile: true,
+        hasTouch: true,
+      },
     },
   ],
   webServer: {
@@ -43,7 +44,7 @@ export default defineConfig({
       ? 'pnpm preview --port 4173 --strictPort'
       : 'pnpm dev --port 5173 --strictPort',
     url: baseURL,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
 })
