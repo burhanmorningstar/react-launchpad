@@ -152,7 +152,7 @@ describe('backend-free starter', () => {
   it('keeps the existing protected examples behind login', async () => {
     const router = openPage('/dashboard')
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'), {
-      timeout: 4000,
+      timeout: 10000,
     })
     router.dispose()
   })

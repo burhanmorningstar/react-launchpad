@@ -1,29 +1,7 @@
-/**
- * Type-safe API Client using OpenAPI types
- *
- * This client uses openapi-fetch for type-safe API calls.
- * Types are generated from your OpenAPI specification.
- *
- * Usage:
- * ```ts
- * import { api } from '@/api-types/client'
- *
- * // Fully typed request and response
- * const { data, error } = await api.GET('/users', {
- *   params: { query: { page: 1, limit: 10 } }
- * })
- *
- * // TypeScript knows the shape of data and error
- * if (data) {
- *   console.log(data.data) // User[]
- *   console.log(data.meta) // PaginationMeta
- * }
- * ```
- */
-
 import createClient from 'openapi-fetch'
 
 import { projectConfig } from '@/config/project'
+import { getAuthAdapter } from '@/core/auth/adapter'
 
 import type { paths } from './schema'
 
@@ -38,8 +16,25 @@ export const api = createClient<paths>({
   },
 })
 
+// Unified middleware integrating with the shared AuthAdapter
+api.use({
+  async onRequest({ request }) {
+    const token = await getAuthAdapter().getAccessToken?.()
+    if (token && !request.headers.has('Authorization')) {
+      request.headers.set('Authorization', `Bearer ${token}`)
+    }
+    return request
+  },
+  onResponse({ response }) {
+    if (response.status === 401) {
+      getAuthAdapter().signOut()
+    }
+    return response
+  },
+})
+
 /**
- * Set authorization header for authenticated requests
+ * Explicit helper to set token if needed
  */
 export function setAuthToken(token: string): void {
   api.use({
@@ -54,12 +49,7 @@ export function setAuthToken(token: string): void {
  * Clear authorization header (for logout)
  */
 export function clearAuthToken(): void {
-  api.use({
-    onRequest({ request }) {
-      request.headers.delete('Authorization')
-      return request
-    },
-  })
+  getAuthAdapter().signOut()
 }
 
 // Re-export types for convenience

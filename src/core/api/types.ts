@@ -1,15 +1,21 @@
-export interface ApiError {
-  message: string
-  code?: string
-  status?: number
-  details?: Record<string, unknown>
-}
+export * from './errors'
 
 export interface ApiResponse<T> {
   data: T
   message?: string
 }
 
+export interface PageResult<T> {
+  items: T[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+/**
+ * Legacy PaginatedResponse maintained for backwards compatibility.
+ */
 export interface PaginatedResponse<T> {
   data: T[]
   meta: {
@@ -23,4 +29,5 @@ export interface PaginatedResponse<T> {
 export interface PaginationParams {
   page?: number
   limit?: number
+  pageSize?: number
 }

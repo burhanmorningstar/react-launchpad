@@ -1,66 +1,91 @@
-import { createContext, useCallback, useState } from 'react'
-import type { ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react'
 
-import { STORAGE_KEYS } from '@/config'
+import { getAuthAdapter, type AuthAdapter } from './adapter'
 
 import type { AuthState, User } from './types'
 
-interface AuthContextValue extends AuthState {
+export interface AuthContextValue extends AuthState {
   login: (token: string, user: User) => void
   logout: () => void
   updateUser: (user: User) => void
+  adapter: AuthAdapter
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
-interface AuthProviderProps {
+export interface AuthProviderProps {
   children: ReactNode
+  adapter?: AuthAdapter
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({
+  children,
+  adapter: customAdapter,
+}: AuthProviderProps) {
+  const adapter = customAdapter || getAuthAdapter()
+
   const [state, setState] = useState<AuthState>(() => {
     try {
-      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
-      const userJson = localStorage.getItem('user')
-
-      if (token && userJson) {
-        try {
-          const user = JSON.parse(userJson) as User
-          return {
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-          }
-        } catch {
-          localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
-          localStorage.removeItem('user')
-        }
+      const initial = adapter.getSession()
+      if (
+        initial &&
+        typeof (initial as Promise<AuthState>).then !== 'function'
+      ) {
+        return initial as AuthState
       }
     } catch {
-      /* Storage is optional; an anonymous in-memory session still works. */
+      // Storage access blocked or denied
     }
     return { user: null, isAuthenticated: false, isLoading: false }
   })
 
-  const login = useCallback((token: string, user: User) => {
-    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
-    localStorage.setItem('user', JSON.stringify(user))
-    setState({ user, isAuthenticated: true, isLoading: false })
-  }, [])
+  useEffect(() => {
+    const unsubscribe = adapter.subscribe((nextState) => {
+      setState(nextState)
+    })
+    return () => {
+      unsubscribe()
+    }
+  }, [adapter])
+
+  const login = useCallback(
+    (token: string, user: User) => {
+      const nextState: AuthState = {
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+      }
+      adapter.setSession?.(nextState, token)
+    },
+    [adapter]
+  )
 
   const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
-    localStorage.removeItem('user')
-    setState({ user: null, isAuthenticated: false, isLoading: false })
-  }, [])
+    adapter.signOut()
+  }, [adapter])
 
-  const updateUser = useCallback((user: User) => {
-    localStorage.setItem('user', JSON.stringify(user))
-    setState((prev) => ({ ...prev, user }))
-  }, [])
+  const updateUser = useCallback(
+    (user: User) => {
+      const nextState: AuthState = {
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+      }
+      adapter.setSession?.(nextState)
+    },
+    [adapter]
+  )
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{ ...state, login, logout, updateUser, adapter }}
+    >
       {children}
     </AuthContext.Provider>
   )

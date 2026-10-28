@@ -1,7 +1,11 @@
-export { apiClient } from './client'
+export { apiClient, createApiClient, createCustomClient } from './client'
+export type { ApiClientOptions, RetryConfig } from './client'
+export { ApiError, normalizeApiError } from './errors'
+export type { ApiErrorKind, ApiErrorPayload } from './errors'
+export { queryKeys } from './queryKeys'
 export type {
-  ApiError,
   ApiResponse,
+  PageResult,
   PaginatedResponse,
   PaginationParams,
 } from './types'

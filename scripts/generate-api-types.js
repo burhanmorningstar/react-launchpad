@@ -2,15 +2,15 @@
 /**
  * API Type Generation Script
  *
- * Generates TypeScript types from OpenAPI specification.
+ * Generates TypeScript types from OpenAPI specification using local binary with safe argument arrays.
  *
  * Usage:
- *   pnpm generate:api-types                    # Use default openapi.yaml
+ *   pnpm generate:api-types                      # Use default openapi.yaml
  *   pnpm generate:api-types ./path/to/spec.yaml  # Custom spec file
- *   pnpm generate:api-types https://api.example.com/openapi.json  # Remote spec
+ *   pnpm generate:api-types https://api.example.com/openapi.json
  */
 
-import { execSync } from 'child_process'
+import { spawnSync } from 'child_process'
 import { existsSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -44,13 +44,23 @@ console.log('🔄 Generating API types...')
 console.log(`   Spec: ${specPath}`)
 console.log(`   Output: ${OUTPUT_FILE}`)
 
-try {
-  execSync(`npx openapi-typescript "${specPath}" -o "${OUTPUT_FILE}"`, {
+// Run openapi-typescript via pnpm exec with safe argument array (no shell interpolation)
+const isWindows = process.platform === 'win32'
+const pnpmCmd = isWindows ? 'pnpm.cmd' : 'pnpm'
+
+const result = spawnSync(
+  pnpmCmd,
+  ['exec', 'openapi-typescript', specPath, '-o', OUTPUT_FILE],
+  {
     cwd: rootDir,
     stdio: 'inherit',
-  })
-  console.log('✅ API types generated successfully!')
-} catch (error) {
+    shell: false,
+  }
+)
+
+if (result.status !== 0) {
   console.error('❌ Failed to generate API types')
-  process.exit(1)
+  process.exit(result.status || 1)
 }
+
+console.log('✅ API types generated successfully!')
