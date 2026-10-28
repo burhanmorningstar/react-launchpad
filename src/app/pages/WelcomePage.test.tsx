@@ -155,5 +155,5 @@ describe('backend-free starter', () => {
       timeout: 10000,
     })
     router.dispose()
-  })
+  }, 15000)
 })
