@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/core/auth'
 import { useTheme } from '@/core/theme/useTheme'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/core/ui'
-import i18n from '@/i18n'
+import i18n, { getLocales } from '@/i18n'
 
 export function SettingsPage() {
   const { t } = useTranslation()
@@ -79,21 +79,19 @@ export function SettingsPage() {
               <label className="mb-2 block text-sm font-medium text-text-primary">
                 Language
               </label>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant={i18n.language === 'en' ? 'default' : 'outline'}
-                  onClick={() => handleLanguageChange('en')}
-                >
-                  English
-                </Button>
-                <Button
-                  size="sm"
-                  variant={i18n.language === 'tr' ? 'default' : 'outline'}
-                  onClick={() => handleLanguageChange('tr')}
-                >
-                  Türkçe
-                </Button>
+              <div className="flex flex-wrap gap-2">
+                {getLocales().map((locale) => (
+                  <Button
+                    key={locale.code}
+                    size="sm"
+                    variant={
+                      i18n.language === locale.code ? 'default' : 'outline'
+                    }
+                    onClick={() => handleLanguageChange(locale.code)}
+                  >
+                    {locale.name}
+                  </Button>
+                ))}
               </div>
             </div>
           </CardContent>
