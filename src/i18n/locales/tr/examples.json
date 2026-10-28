@@ -1,0 +1,74 @@
+{
+  "title": "Frontend Örnekleri",
+  "description": "Sıfır backend bağımlılığıyla çalışan interaktif iş akışlarını keşfedin",
+  "cards": {
+    "forms": "Formlar ve Doğrulama",
+    "formsDesc": "Erişilebilir formlar, şema doğrulaması, adım sihirbazı ve 422 hata simülasyonu",
+    "tables": "Veri Tablosu ve URL Durumu",
+    "tablesDesc": "Filtreleme, sayfalama, sıralama ve modal akışlarıyla interaktif liste",
+    "files": "Dosya Yükleme ve Önizleme",
+    "filesDesc": "Sürükle-bırak, dosya doğrulama, yükleme kuyrukları ve görsel önizlemeleri",
+    "content": "Zengin İçerik ve Analitik",
+    "contentDesc": "Temizlenen zengin metin editörü, sanal liste ve erişilebilir SVG grafikleri"
+  },
+  "forms": {
+    "title": "Etkileşimli Form İş Akışları",
+    "description": "React Hook Form, yerelleştirilmiş Zod doğrulaması, sunucu hata eşleme ve çok adımlı sihirbazları gösterir.",
+    "createProfile": "Kullanıcı Profili Oluştur",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "email": "E-posta Adresi",
+    "role": "Rol",
+    "bio": "Biyografi",
+    "submit": "Profili Gönder",
+    "wizardTitle": "Çok Adımlı Kurulum Sihirbazı",
+    "stepAccount": "Hesap",
+    "stepPreferences": "Tercihler",
+    "newsletter": "Geliştirici bültenine abone ol",
+    "marketing": "Ürün güncellemelerini al",
+    "themePref": "Tercih Edilen Tema",
+    "conflictHint": "İpucu: E-posta girişine eşlenen 422 sunucu çakışma hatasını görmek için 'taken@example.com' girin.",
+    "createdSuccess": "Profil başarıyla oluşturuldu!"
+  },
+  "tables": {
+    "title": "URL Durumlu Veri Tablosu",
+    "description": "Arama filtreleri, sütun sıralama, sayfalama ve modal onayı ile istemci/manuel veri tablolarını gösterir.",
+    "search": "Kullanıcı ara...",
+    "roleFilter": "Rol",
+    "allRoles": "Tüm Roller",
+    "statusFilter": "Durum",
+    "allStatuses": "Tüm Durumlar",
+    "addUser": "Kullanıcı Ekle",
+    "editUser": "Kullanıcıyı Düzenle",
+    "deleteUser": "Kullanıcıyı Sil",
+    "deleteConfirmTitle": "Kullanıcı Silme Onayı",
+    "deleteConfirmDesc": "Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "bulkDelete": "Seçilenleri Sil"
+  },
+  "files": {
+    "title": "Dosya Seçimi ve Yükleme Yönetimi",
+    "description": "Sürükle-bırak dosya seçimi, istemci tarafı doğrulama, yükleme ilerlemesi ve dosya önizlemelerini gösterir.",
+    "uploadHeading": "Belge veya Medya Yükle",
+    "uploadQueue": "Yükleme Kuyruğu",
+    "simulatedNotice": "Yüklemeler bir yükleme bağdaştırıcısı kullanılarak tamamen bellek içinde işlenir."
+  },
+  "content": {
+    "title": "Zengin İçerik, Görselleştirme ve Sanallaştırma",
+    "description": "Temizlenmiş zengin metin düzenleme, etkileşimli SVG grafikleri ve yüksek performanslı liste sanallaştırmasını gösterir.",
+    "editorHeading": "Zengin Metin Editörü ve Temizlenmiş Önizleme",
+    "chartHeading": "Gelir Analitiği Grafiği",
+    "virtualListHeading": "Yüksek Hacimli Sanallaştırılmış Liste (1.000 kayıt)",
+    "toggleData": "Boş Durumu Değiştir",
+    "toggleLoading": "Yükleniyor Durumunu Değiştir"
+  },
+  "auth": {
+    "title": "Bellek İçi Kimlik Doğrulama ve Rol Değiştirme",
+    "description": "Yerel depolamaya veya uzak sunuculara dokunmadan farklı uygulama rollerini test edin.",
+    "currentRole": "Geçerli Rol",
+    "admin": "Yönetici",
+    "user": "Standart Kullanıcı",
+    "switchToAdmin": "Yöneticiye Geç",
+    "switchToUser": "Kullanıcıya Geç",
+    "adminNotice": "Yönetici olarak yönetim araçlarına ve kullanıcı tablolarına tam erişiminiz vardır."
+  }
+}

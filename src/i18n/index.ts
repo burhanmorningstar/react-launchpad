@@ -5,9 +5,11 @@ import { projectConfig } from '@/config/project'
 
 import { setI18nInstanceForLoader } from './loadNamespace'
 import enCommon from './locales/en/common.json'
+import enExamples from './locales/en/examples.json'
 import enUsers from './locales/en/users.json'
 import enValidation from './locales/en/validation.json'
 import trCommon from './locales/tr/common.json'
+import trExamples from './locales/tr/examples.json'
 import trUsers from './locales/tr/users.json'
 import trValidation from './locales/tr/validation.json'
 import { getLocaleMetadata, resolveLocalePreference } from './registry'
@@ -17,11 +19,13 @@ export const defaultNS = 'common'
 export const resources = {
   en: {
     common: enCommon,
+    examples: enExamples,
     users: enUsers,
     validation: enValidation,
   },
   tr: {
     common: trCommon,
+    examples: trExamples,
     users: trUsers,
     validation: trValidation,
   },

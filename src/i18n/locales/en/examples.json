@@ -1,0 +1,74 @@
+{
+  "title": "Frontend Examples",
+  "description": "Explore working interactive workflows with zero backend dependencies",
+  "cards": {
+    "forms": "Forms & Validation",
+    "formsDesc": "Accessible forms, schema validation, step wizard and 422 error simulation",
+    "tables": "Data Table & URL State",
+    "tablesDesc": "Interactive list with filtering, pagination, sorting and modal workflows",
+    "files": "File Upload & Preview",
+    "filesDesc": "Dropzone, file validation, upload queues and image previews",
+    "content": "Rich Content & Analytics",
+    "contentDesc": "Sanitized rich text editor, virtual list and accessible SVG charts"
+  },
+  "forms": {
+    "title": "Interactive Form Workflows",
+    "description": "Demonstrates React Hook Form, localized Zod validation, server error mapping and multi-step wizards.",
+    "createProfile": "Create User Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "role": "Role",
+    "bio": "Biography",
+    "submit": "Submit Profile",
+    "wizardTitle": "Multi-Step Onboarding Wizard",
+    "stepAccount": "Account",
+    "stepPreferences": "Preferences",
+    "newsletter": "Subscribe to developer newsletter",
+    "marketing": "Receive product updates",
+    "themePref": "Preferred Theme",
+    "conflictHint": "Tip: Enter 'taken@example.com' to observe a 422 server conflict error mapped to the email input.",
+    "createdSuccess": "Profile created successfully!"
+  },
+  "tables": {
+    "title": "Data Table with URL State",
+    "description": "Demonstrates client/manual data tables with search filters, column sorting, pagination and modal confirmation.",
+    "search": "Search users...",
+    "roleFilter": "Role",
+    "allRoles": "All Roles",
+    "statusFilter": "Status",
+    "allStatuses": "All Statuses",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "deleteConfirmTitle": "Delete User Confirmation",
+    "deleteConfirmDesc": "Are you sure you want to delete this user? This action cannot be undone.",
+    "bulkDelete": "Delete Selected"
+  },
+  "files": {
+    "title": "File Selection and Upload Management",
+    "description": "Demonstrates drag-and-drop file selection, client-side validation, upload progress and file previews.",
+    "uploadHeading": "Upload Document or Media",
+    "uploadQueue": "Upload Queue",
+    "simulatedNotice": "Uploads are handled entirely in-memory using an upload adapter."
+  },
+  "content": {
+    "title": "Rich Content, Visualization & Virtualization",
+    "description": "Demonstrates sanitized rich text editing, interactive SVG charts and high-performance list virtualization.",
+    "editorHeading": "Rich Text Editor & Sanitized Preview",
+    "chartHeading": "Revenue Analytics Chart",
+    "virtualListHeading": "High-Volume Virtualized List (1,000 items)",
+    "toggleData": "Toggle Empty State",
+    "toggleLoading": "Toggle Loading State"
+  },
+  "auth": {
+    "title": "In-Memory Auth & Role Switching",
+    "description": "Test different application perspectives without touching local storage or remote servers.",
+    "currentRole": "Current Role",
+    "admin": "Administrator",
+    "user": "Standard User",
+    "switchToAdmin": "Switch to Admin",
+    "switchToUser": "Switch to User",
+    "adminNotice": "As an Administrator, you have full access to management tools and user tables."
+  }
+}
