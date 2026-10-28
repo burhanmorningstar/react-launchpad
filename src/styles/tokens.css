@@ -57,6 +57,10 @@
   --radius: 0.625rem;
   --space-unit: 0.25rem;
   --page-gutter: 1.5rem;
+  --shell-header-height: 4rem;
+  --shell-sidebar-width: 17rem;
+  --shell-sidebar-collapsed-width: 4.5rem;
+  --shell-content-min-width: 0px;
   --density: 1;
   --control-height: calc(2.25rem * var(--density));
   --control-height-sm: calc(2rem * var(--density));

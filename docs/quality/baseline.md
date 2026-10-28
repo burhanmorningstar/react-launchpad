@@ -339,3 +339,53 @@ remain Tasks 18 and 21.
 Raw logs, browser results and screenshots: `.tmp/task-5/`. Graphify's existing
 1041-node graph identified the legacy component relationships; current source
 reads were used to confirm the migration because the graph predates these edits.
+
+## Task 6 - configurable application shell (2026-10-28)
+
+Dashboard and admin now use the same AppShell and application adapter. Brand,
+navigation, account actions and footer are data/slots. Core has no auth/session or
+product-name dependency. Each shell owns separate desktop-collapse and initially
+closed mobile state. The former global `sidebarOpen` API was removed after its
+consumers migrated. [Application shell](../guides/application-shell.md) documents
+the public API, dimensions, state lifetime and migration.
+
+The app now consumes discovered feature menu descriptors, preserving their route
+mount ownership and app role filtering. New destinations do not need a central
+list edit. A Reports fixture failed before this integration and passed after it;
+its lazy page loader was never called. The final review reported no important
+shell defects and identified this previously promised integration, which was
+completed in the same batch.
+
+| Check                                            | Result                                                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Typecheck and module boundaries                  | Passed                                                                                                 |
+| Lint                                             | Passed; same 7 fast-refresh warnings as Task 5                                                         |
+| Unit suite, one worker                           | 60/60 in 11 files                                                                                      |
+| Tooling regressions                              | 22/22                                                                                                  |
+| App and Storybook builds                         | Passed; existing Storybook large-chunk warning                                                         |
+| Dev Chromium, one worker                         | 22/22                                                                                                  |
+| Production preview desktop + mobile, two workers | 44/44                                                                                                  |
+| Built shell stories                              | 24 cases: 4 fixtures × 3 widths × 2 themes; console warnings/errors and page errors empty              |
+| Responsive visuals                               | 360/768/1440 px, light/dark, long/unbroken/nested menus, second product and collapsed layout inspected |
+| Dimension tokens                                 | Collapsed sidebar 72 px and header 64 px verified against default token values                         |
+| Whole-source formatting                          | Existing 110-file debt remains; changed source is formatted                                            |
+
+Regression tests cover route specificity without query-string inflation, nested
+branches, independent shell instances, hidden footer keyboard targets, mobile
+trigger ARIA state, Escape/focus trapping, route/breakpoint closure, focus recovery
+when a desktop sidebar disappears, and skip-link/main behavior. Mobile dismissal
+assertions wait for the closing Sheet to unmount before screenshots.
+
+The first cold dev shell run, started with other checks, exceeded the existing
+five-second initial main-landmark assertion and separately exposed the missing
+mobile `aria-expanded` attribute. The attribute override was reproduced in a unit
+test and fixed. Isolated final dev22/22 passed with unchanged timeouts; the known
+cold-run scheduling concern remains with Task 21. A cold parallel Task 5 completion
+audit similarly missed its existing four-second protected-route assertion; the
+unchanged full suite passed serially. These results do not claim that fixture
+timing debt is resolved.
+
+Raw logs, screenshots and Graphify relationship query: `.tmp/task-6/`. Sessions
+are local fixtures; no backend login, deployment or global tool installation was
+performed. Language/RTL expansion and whole-app accessibility coverage remain
+with their planned later tasks.

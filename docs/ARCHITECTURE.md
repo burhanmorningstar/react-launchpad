@@ -39,9 +39,10 @@ export const feature = {
     {
       route: {
         path: '/orders',
-        lazy: () => import('./pages/OrdersPage').then(({ OrdersPage }) => ({
-          Component: OrdersPage,
-        })),
+        lazy: () =>
+          import('./pages/OrdersPage').then(({ OrdersPage }) => ({
+            Component: OrdersPage,
+          })),
       },
     },
   ],
@@ -67,7 +68,10 @@ React Router'ın diğer route yapı kuralları kendi denetiminde kalır.
 `guest`, `dashboard`, `admin` slot'ları `feature-layouts.tsx` içinde birleşir;
 bilinmeyen slot açık hata verir. Core bu isimlere veya oturum state'ine bağlı
 değildir. `mount` verilmezse route public olarak eklenir. Menü katkıları loader
-sonucunda döner; ortak shell'in menü tüketimi Görev 6'da tamamlanır.
+sonucunda döner. AppRouter keşfedilen descriptor'ları app context'iyle shell'e
+iletir; app, menüleri ait oldukları route mount'u ve kullanıcı rolüyle filtreler.
+Yeni feature menüsü merkez hedef listesi editi gerektirmez; core yalnız çözülmüş
+navigasyon verisini alır. Ayrıntılar: [Application shell](guides/application-shell.md).
 
 Eski auth/dashboard/users/settings adresleri kendi feature route dosyalarına
 taşındı; URL ve guard davranışı korundu. `example: true` tanımları
@@ -400,10 +404,17 @@ import type { FeatureDefinition } from '@/core/routing/types'
 
 export const feature = {
   id: 'orders',
-  routes: [{ route: {
-    path: '/orders',
-    lazy: () => import('./pages/OrdersPage').then(({ OrdersPage }) => ({ Component: OrdersPage })),
-  } }],
+  routes: [
+    {
+      route: {
+        path: '/orders',
+        lazy: () =>
+          import('./pages/OrdersPage').then(({ OrdersPage }) => ({
+            Component: OrdersPage,
+          })),
+      },
+    },
+  ],
 } satisfies FeatureDefinition
 ```
 

@@ -1,13 +1,18 @@
-import { create } from 'zustand'
+import { createStore } from 'zustand/vanilla'
 
-interface UIState {
-  sidebarOpen: boolean
-  toggleSidebar: () => void
-  setSidebarOpen: (open: boolean) => void
+export interface ShellState {
+  desktopCollapsed: boolean
+  mobileOpen: boolean
+  setDesktopCollapsed: (collapsed: boolean) => void
+  setMobileOpen: (open: boolean) => void
 }
 
-export const useUIStore = create<UIState>()((set) => ({
-  sidebarOpen: true,
-  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-  setSidebarOpen: (open) => set({ sidebarOpen: open }),
-}))
+/** Each shell owns an instance; mobile visibility is never a desktop preference. */
+export function createShellStore(desktopCollapsed = false) {
+  return createStore<ShellState>()((set) => ({
+    desktopCollapsed,
+    mobileOpen: false,
+    setDesktopCollapsed: (collapsed) => set({ desktopCollapsed: collapsed }),
+    setMobileOpen: (open) => set({ mobileOpen: open }),
+  }))
+}

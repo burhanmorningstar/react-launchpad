@@ -3,6 +3,10 @@ import type { FeatureDefinition } from '@/core/routing/types'
 export const feature = {
   id: 'dashboard',
   example: true,
+  menu: [
+    { id: 'overview', label: 'navigation.dashboard', href: '/dashboard' },
+    { id: 'admin-overview', label: 'navigation.dashboard', href: '/admin' },
+  ],
   routes: [
     {
       mount: 'dashboard',

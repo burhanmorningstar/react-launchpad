@@ -330,8 +330,8 @@ const columns: ColumnDef<User>[] = [
 <ThemeToggle />    // Simple icon toggle
 
 // Programmatic
-import { useUIStore } from '@/core/store'
-const { theme, setTheme } = useUIStore()
+import { useTheme } from '@/core/theme/useTheme'
+const { theme, setTheme } = useTheme()
 setTheme('dark') // 'light' | 'dark' | 'system'
 ```
 

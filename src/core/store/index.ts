@@ -1,1 +1,1 @@
-export { useUIStore } from './slices/uiSlice'
+export { createShellStore, type ShellState } from './slices/uiSlice'

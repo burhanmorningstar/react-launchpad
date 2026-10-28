@@ -4,13 +4,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 
 import { projectConfig } from '@/config/project'
 
+import { FeatureNavigationContext } from '../feature-navigation'
 import { loadFeatureRoutes } from './feature-routes'
 import { createRoutes } from './routes'
 
 const routerPromise = loadFeatureRoutes(undefined, {
   examplesEnabled: projectConfig.examplesEnabled,
   reservedPaths: ['/', projectConfig.homePath, '/*'],
-}).then(async ({ routes }) => {
+}).then(async ({ routes, features }) => {
   const router = createBrowserRouter(createRoutes(projectConfig, routes))
   // A lazy initial match can settle before a suspended RouterProvider commits
   // its subscription. Mount it with the ready snapshot to avoid losing that
@@ -25,9 +26,14 @@ const routerPromise = loadFeatureRoutes(undefined, {
       })
     })
   }
-  return router
+  return { router, features }
 })
 
 export function AppRouter() {
-  return <RouterProvider router={use(routerPromise)} />
+  const { router, features } = use(routerPromise)
+  return (
+    <FeatureNavigationContext.Provider value={features}>
+      <RouterProvider router={router} />
+    </FeatureNavigationContext.Provider>
+  )
 }
