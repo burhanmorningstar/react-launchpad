@@ -12,6 +12,13 @@ if (typeof window !== 'undefined' && !globalThis.ResizeObserver) {
   }
 }
 
+if (
+  typeof window !== 'undefined' &&
+  !window.HTMLElement.prototype.scrollIntoView
+) {
+  window.HTMLElement.prototype.scrollIntoView = function () {}
+}
+
 // Cleanup after each test
 afterEach(() => {
   cleanup()

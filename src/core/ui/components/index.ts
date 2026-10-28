@@ -138,3 +138,4 @@ export * from './spinner'
 export * from './empty'
 
 export * from './field'
+export * from './carousel'
