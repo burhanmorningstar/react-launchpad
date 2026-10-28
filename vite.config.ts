@@ -126,6 +126,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
+      manifest: true,
       // Chunk splitting for better caching
       rollupOptions: {
         output: {

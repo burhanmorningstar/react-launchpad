@@ -112,6 +112,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check bundle budgets
+        run: pnpm check:bundle
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
