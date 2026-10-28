@@ -1,0 +1,31 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Theming" />
+
+# Theming & Design Tokens
+
+React Launchpad implements a semantic token architecture built on top of **Tailwind CSS v4** and `next-themes`.
+
+## Theme Modes
+
+The system natively supports three theme modes:
+1. **Light:** High-contrast crisp interfaces for bright environments.
+2. **Dark:** Eye-friendly low-light interfaces using semantic dark surface scales.
+3. **System:** Automatically follows the operating system's color scheme preference.
+
+## Semantic Color Palette
+
+All UI components consume CSS variables instead of hardcoded hex values:
+
+- `--background`: Base background color of the canvas.
+- `--foreground`: Primary typography and high-emphasis icons.
+- `--card` / `--card-foreground`: Elevated surface cards and containers.
+- `--primary` / `--primary-foreground`: Primary action color and on-primary text.
+- `--muted` / `--muted-foreground`: Subdued backgrounds and helper labels.
+- `--destructive`: Danger and error states.
+- `--border` / `--input` / `--ring`: Form borders, divider lines, and focus outlines.
+
+## Direction & RTL Support
+
+The design system includes first-class support for Right-to-Left (RTL) locales. Layout margins, text alignments, and directional icons automatically mirror when `dir="rtl"` is applied to the document.
+

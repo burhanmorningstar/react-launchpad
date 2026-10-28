@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Localization" />
+
+# Runtime Localization & i18n
+
+React Launchpad treats multi-language support as a foundational first-class capability rather than an afterthought.
+
+## Architecture & Tooling
+
+- **Canonical Language (`en`):** The English locale serves as the single source of truth for all namespace schema keys.
+- **Enabled Locales:** Out-of-the-box support for English (`en`) and Turkish (`tr`).
+- **Namespace Splitting:** Locale dictionaries are organized by functional domain (`common`, `users`, `validation`, `examples`).
+- **Automated Validation (`pnpm i18n:check`):** Prevents production build regressions by verifying missing translation keys, interpolation variables, and plural rules across all enabled languages.
+- **Locale Generators (`pnpm generate:locale` & `pnpm generate:namespace`):** Streamline onboarding new languages or expanding existing namespaces without manual file juggling.
+
+## Adding a New Language
+
+1. Scaffold the draft locale:
+   ```bash
+   pnpm generate:locale de --name "Deutsch"
+   ```
+2. Populate the translated strings in `src/i18n/locales/de/*.json`.
+3. Verify translation completeness:
+   ```bash
+   pnpm i18n:check
+   ```
+4. Promote from draft to enabled:
+   ```bash
+   pnpm i18n:enable de --reviewed
+   ```
+

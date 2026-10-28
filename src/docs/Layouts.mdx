@@ -1,0 +1,21 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Layouts" />
+
+# Layouts & Application Shell
+
+The layout tier provides structured page shells that scale smoothly from small mobile viewports to ultra-wide desktop monitors.
+
+## Key Components
+
+- **`AppShell`:** Responsive root shell providing collapsible navigation sidebars, header toolbars, and slotted user profile actions.
+- **`PageHeader`:** Consistent page title, description, and action button bar with semantic `h1` heading hierarchy.
+- **`MetricCard`:** Metric summary cards displaying KPIs, trend percentages, and contextual sparklines.
+- **`EmptyState`:** Accessible fallback presentation with custom icon, message, and call-to-action buttons.
+- **`CommandPalette`:** Global `Cmd+K` keyboard palette for lightning-fast command execution and page navigation.
+
+## Responsive Behavior
+
+- **Mobile Viewports (< 768px):** The sidebar collapses into an accessible slide-over sheet drawer (`Dialog`). Focus is trapped within the sheet and automatically returned to the hamburger trigger upon dismissal.
+- **Desktop Viewports (>= 768px):** Supports full and condensed sidebar widths with sticky headers and independent scrollable content areas.
+

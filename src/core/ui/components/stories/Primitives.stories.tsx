@@ -686,3 +686,14 @@ export const Toasts: Story = {
     </div>
   ),
 }
+export const BreadcrumbsShowcase: Story = {
+  render: () => (
+    <UI.Breadcrumbs
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Settings', href: '/settings' },
+        { label: 'Team' },
+      ]}
+    />
+  ),
+}

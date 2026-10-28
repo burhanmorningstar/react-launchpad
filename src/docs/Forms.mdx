@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Forms" />
+
+# Form System & Validation
+
+The form architecture harmonizes **React Hook Form (RHF)**, **Zod schemas**, and **i18next** into an accessible, developer-friendly workflow.
+
+## Key Capabilities
+
+- **`useAppForm` Hook:** Type-safe wrapper ensuring form input and output types stay strictly aligned with your Zod schema.
+- **`FieldShell` Component:** Manages IDs, labels, helper hints, and `aria-describedby` / `aria-invalid` connections automatically.
+- **Dynamic Localization:** Validation error messages evaluate at render time. Switching languages updates error labels immediately without losing field values or dirty state.
+- **Server Error Normalization:** HTTP 422 field errors map straight into individual field contexts via `mapFieldErrors`.
+- **Advanced Workflows:** Includes `FormStepper` for multi-step onboarding, `FieldArray` for repeating rows, and `useFormDraft` for local storage draft caching.
+
+## Example Usage
+
+```tsx
+import { Form, TextField, useAppForm } from '@/core/forms'
+import { z } from 'zod'
+
+const userSchema = z.object({
+  email: z.string().email(),
+  username: z.string().min(3),
+})
+
+export function SimpleUserForm() {
+  const form = useAppForm({
+    schema: userSchema,
+    defaultValues: { email: '', username: '' },
+  })
+
+  return (
+    <Form form={form} onSubmit={(data) => console.log(data)}>
+      <TextField name="email" label="Email" required />
+      <TextField name="username" label="Username" required />
+      <button type="submit">Submit</button>
+    </Form>
+  )
+}
+```
+

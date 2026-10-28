@@ -1,0 +1,20 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Documentation/Data" />
+
+# Data Management, Tables & URL State
+
+React Launchpad unifies data fetching, tabular rendering, and URL synchronization into resilient, predictable patterns.
+
+## Unified API & Error Contracts
+
+- **`createApiClient`:** Factory creating Axios instances configured with request ID injection, centralized retry backoff, and 401 handling.
+- **Safe Retry Policies:** Automated retries apply exclusively to safe read operations (GET/HEAD) and explicitly idempotent POST requests carrying an `Idempotency-Key` header.
+- **`ApiError` Normalization:** Normalizes network disconnects, HTTP 401/403/422/500 errors into typed error structures with requestId traceability.
+
+## DataTable & URL Sync
+
+- **`DataTable` Component:** Built on TanStack Table v8, supporting both `client` (in-memory) and `manual` (server-paginated) operational modes.
+- **`useUrlState` Hook:** Connects table filters, page index, and sort order directly to browser query parameters. Shareable URLs restore filter states automatically.
+- **Bulk Selection & Actions:** Built-in row selection with sticky selection action bars and confirmation modals.
+
