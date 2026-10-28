@@ -4,6 +4,14 @@ import { afterEach, beforeAll, afterAll } from 'vitest'
 
 import { server } from './mocks/server'
 
+if (typeof window !== 'undefined' && !globalThis.ResizeObserver) {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+  }
+}
+
 // Cleanup after each test
 afterEach(() => {
   cleanup()

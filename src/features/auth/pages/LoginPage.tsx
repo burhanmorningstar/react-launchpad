@@ -1,20 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 
 import { ROUTES } from '@/config'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Field,
-  FieldLabel,
-  FieldError,
-} from '@/core/ui'
+import { Form, TextField, PasswordField, useAppForm } from '@/core/forms'
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/core/ui'
 
 import { loginSchema, useLoginMutation } from '../api'
 
@@ -24,12 +13,12 @@ export function LoginPage() {
   const { t } = useTranslation()
   const loginMutation = useLoginMutation()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  const form = useAppForm({
+    schema: loginSchema,
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   })
 
   const onSubmit = (data: LoginFormData) => {
@@ -42,38 +31,25 @@ export function LoginPage() {
         <CardTitle>Login</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Field data-invalid={Boolean(errors.email)}>
-            <FieldLabel htmlFor="login-email">Email</FieldLabel>
-            <Input
-              id="login-email"
-              type="email"
-              placeholder="you@example.com"
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? 'login-email-error' : undefined}
-              {...register('email')}
-            />
-            <FieldError id="login-email-error">
-              {errors.email?.message}
-            </FieldError>
-          </Field>
+        <Form form={form} onSubmit={onSubmit} className="space-y-4">
+          <TextField
+            control={form.control}
+            name="email"
+            type="email"
+            label="Email"
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+          />
 
-          <Field data-invalid={Boolean(errors.password)}>
-            <FieldLabel htmlFor="login-password">Password</FieldLabel>
-            <Input
-              id="login-password"
-              type="password"
-              placeholder="Enter your password"
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby={
-                errors.password ? 'login-password-error' : undefined
-              }
-              {...register('password')}
-            />
-            <FieldError id="login-password-error">
-              {errors.password?.message}
-            </FieldError>
-          </Field>
+          <PasswordField
+            control={form.control}
+            name="password"
+            label="Password"
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            required
+          />
 
           {loginMutation.error && (
             <div className="rounded-md bg-error/10 p-3 text-sm text-error">
@@ -100,7 +76,7 @@ export function LoginPage() {
               Register
             </Link>
           </p>
-        </form>
+        </Form>
       </CardContent>
     </Card>
   )
