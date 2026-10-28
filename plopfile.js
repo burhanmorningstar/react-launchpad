@@ -1,5 +1,22 @@
+import { planFiles } from './scripts/generators/plan-files.mjs'
+import { writeFiles } from './scripts/generators/write-files.mjs'
+
 /** @type {import('plop').NodePlopAPI} */
 export default function (plop) {
+  // Custom atomic action that delegates to plan-files and write-files
+  plop.setActionType('atomicGenerate', (answers, config) => {
+    const plan = planFiles({
+      type: config.generatorType,
+      name: answers.name,
+      options: {
+        feature: answers.featureName || answers.feature,
+        core: answers.location === 'core',
+      },
+    })
+    const result = writeFiles(plan)
+    return `Generated ${result.createdFiles.length} file(s) with atomic rollback protection.`
+  })
+
   // Feature generator
   plop.setGenerator('feature', {
     description: 'Create a new feature module',
@@ -7,7 +24,7 @@ export default function (plop) {
       {
         type: 'input',
         name: 'name',
-        message: 'Feature name (e.g., "products", "user-settings"):',
+        message: 'Feature name (kebab-case, e.g. "billing-portal"):',
         validate: (value) => {
           if (!value) return 'Feature name is required'
           if (!/^[a-z]+(-[a-z]+)*$/.test(value)) {
@@ -16,101 +33,68 @@ export default function (plop) {
           return true
         },
       },
+    ],
+    actions: [
       {
-        type: 'confirm',
-        name: 'hasApi',
-        message: 'Does this feature need API integration?',
-        default: true,
-      },
-      {
-        type: 'confirm',
-        name: 'hasStore',
-        message: 'Does this feature need local state (Zustand store)?',
-        default: false,
+        type: 'atomicGenerate',
+        generatorType: 'feature',
       },
     ],
-    actions: (data) => {
-      const actions = [
-        // Create index.ts (barrel export)
-        {
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/index.ts',
-          templateFile: 'plop-templates/feature/index.ts.hbs',
-        },
-        // Create types
-        {
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/types/index.ts',
-          templateFile: 'plop-templates/feature/types/index.ts.hbs',
-        },
-        // Create page
-        {
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/pages/{{pascalCase name}}Page.tsx',
-          templateFile: 'plop-templates/feature/pages/Page.tsx.hbs',
-        },
-        // Create pages index
-        {
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/pages/index.ts',
-          templateFile: 'plop-templates/feature/pages/index.ts.hbs',
-        },
-        // Create components index
-        {
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/components/index.ts',
-          template: '// Export feature components here\n',
-        },
-        // Create i18n file
-        {
-          type: 'add',
-          path: 'src/i18n/locales/en/{{dashCase name}}.json',
-          templateFile: 'plop-templates/feature/i18n.json.hbs',
-        },
-        {
-          type: 'add',
-          path: 'src/i18n/locales/tr/{{dashCase name}}.json',
-          templateFile: 'plop-templates/feature/i18n.json.hbs',
-        },
-      ]
+  })
 
-      // Add API files if needed
-      if (data.hasApi) {
-        actions.push(
-          {
-            type: 'add',
-            path: 'src/features/{{dashCase name}}/api/queries.ts',
-            templateFile: 'plop-templates/feature/api/queries.ts.hbs',
-          },
-          {
-            type: 'add',
-            path: 'src/features/{{dashCase name}}/api/mutations.ts',
-            templateFile: 'plop-templates/feature/api/mutations.ts.hbs',
-          },
-          {
-            type: 'add',
-            path: 'src/features/{{dashCase name}}/api/index.ts',
-            templateFile: 'plop-templates/feature/api/index.ts.hbs',
-          }
-        )
-      }
+  // Page generator
+  plop.setGenerator('page', {
+    description: 'Create a new page in a feature module',
+    prompts: [
+      {
+        type: 'input',
+        name: 'feature',
+        message: 'Feature name (e.g., "users"):',
+        validate: (val) => (val ? true : 'Feature name is required'),
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Page name (e.g. "Profile" or "Settings"):',
+        validate: (val) => (val ? true : 'Page name is required'),
+      },
+    ],
+    actions: [
+      {
+        type: 'atomicGenerate',
+        generatorType: 'page',
+      },
+    ],
+  })
 
-      // Add store if needed
-      if (data.hasStore) {
-        actions.push({
-          type: 'add',
-          path: 'src/features/{{dashCase name}}/store/index.ts',
-          templateFile: 'plop-templates/feature/store/index.ts.hbs',
-        })
-      }
-
-      return actions
-    },
+  // Form generator
+  plop.setGenerator('form', {
+    description: 'Create a Zod-validated form with test and story',
+    prompts: [
+      {
+        type: 'input',
+        name: 'feature',
+        message: 'Feature name (e.g. "billing"):',
+        validate: (val) => (val ? true : 'Feature name is required'),
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Form name (e.g. "Invoice" or "UserProfile"):',
+        validate: (val) => (val ? true : 'Form name is required'),
+      },
+    ],
+    actions: [
+      {
+        type: 'atomicGenerate',
+        generatorType: 'form',
+      },
+    ],
   })
 
   // Component generator
   plop.setGenerator('component', {
-    description: 'Create a new component',
+    description: 'Create a new UI component',
     prompts: [
       {
         type: 'list',
@@ -141,20 +125,12 @@ export default function (plop) {
         },
       },
     ],
-    actions: (data) => {
-      const basePath =
-        data.location === 'core'
-          ? 'src/core/ui/components'
-          : `src/features/${data.featureName}/components`
-
-      return [
-        {
-          type: 'add',
-          path: `${basePath}/{{pascalCase name}}.tsx`,
-          templateFile: 'plop-templates/component/Component.tsx.hbs',
-        },
-      ]
-    },
+    actions: [
+      {
+        type: 'atomicGenerate',
+        generatorType: 'component',
+      },
+    ],
   })
 
   // Hook generator
@@ -166,7 +142,7 @@ export default function (plop) {
         name: 'location',
         message: 'Where should this hook be created?',
         choices: [
-          { name: 'Shared hooks', value: 'shared' },
+          { name: 'Core hook (shared)', value: 'core' },
           { name: 'Feature hook', value: 'feature' },
         ],
       },
@@ -180,29 +156,15 @@ export default function (plop) {
       {
         type: 'input',
         name: 'name',
-        message: 'Hook name (without "use" prefix):',
-        validate: (value) => {
-          if (!value) return 'Hook name is required'
-          if (!/^[A-Z][a-zA-Z]*$/.test(value)) {
-            return 'Hook name must be PascalCase (e.g., "LocalStorage")'
-          }
-          return true
-        },
+        message: 'Hook name (e.g., "useDebounce" or "Debounce"):',
+        validate: (value) => (value ? true : 'Hook name is required'),
       },
     ],
-    actions: (data) => {
-      const basePath =
-        data.location === 'shared'
-          ? 'src/shared/hooks'
-          : `src/features/${data.featureName}/hooks`
-
-      return [
-        {
-          type: 'add',
-          path: `${basePath}/use{{pascalCase name}}.ts`,
-          templateFile: 'plop-templates/hook/useHook.ts.hbs',
-        },
-      ]
-    },
+    actions: [
+      {
+        type: 'atomicGenerate',
+        generatorType: 'hook',
+      },
+    ],
   })
 }
