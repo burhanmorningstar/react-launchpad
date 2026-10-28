@@ -14,7 +14,7 @@ import {
   Button,
   useToast,
 } from '@/core/ui'
-import { DataTable } from '@/core/ui/components/DataTable'
+import { DataTable } from '@/core/ui/data-table'
 
 import { useDeleteUser } from '../api'
 
@@ -199,6 +199,7 @@ export function UserTable({
         enableSorting
         enablePagination
         emptyMessage="No users found"
+        getRowId={(u) => u.id}
       />
       <AlertDialog
         open={Boolean(pendingUser)}
