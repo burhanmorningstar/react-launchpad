@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useState } from 'react'
+import { Suspense, lazy, useContext, useState, useEffect } from 'react'
 
 import {
   Sparkles,
@@ -44,6 +44,27 @@ export function WelcomePage({
   config?: ProjectConfig
 }) {
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [playgroundTab, setPlaygroundTab] = useState('primitives')
+
+  // Global keyboard shortcut for Ctrl+K / Cmd+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const jumpToTab = (tabName: string) => {
+    setPlaygroundTab(tabName)
+    document
+      .getElementById('playground')
+      ?.scrollIntoView({ behavior: 'smooth' })
+    setPaletteOpen(false)
+  }
 
   const paletteItems: CommandPaletteItem[] = [
     {
@@ -75,12 +96,49 @@ export function WelcomePage({
       title: 'Canlı Bileşen Deneyim Alanı',
       description: 'Butonlar, formlar, tablolar ve modallar',
       group: 'Gezinme',
-      onSelect: () => {
-        document
-          .getElementById('playground')
-          ?.scrollIntoView({ behavior: 'smooth' })
-        setPaletteOpen(false)
-      },
+      onSelect: () => jumpToTab('primitives'),
+    },
+    {
+      id: 'jump-forms',
+      title: 'Formlar ve Doğrulama Simülasyonu',
+      description: 'Zod uyumlu dinamik form kontrolleri ve state takipçisi',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('forms'),
+    },
+    {
+      id: 'jump-tables',
+      title: 'İnteraktif Veri Tablosu',
+      description: 'Sıralama, sayfalama ve satır seçimi kontrolleri',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('tables'),
+    },
+    {
+      id: 'jump-overlays',
+      title: 'Modallar, Yan Paneller & Toasts',
+      description: 'Radix Dialog, Sheet, AlertDialog ve Sonner bildirimleri',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('overlays'),
+    },
+    {
+      id: 'jump-charts',
+      title: 'SVG Veri Grafikleri',
+      description: 'Hafif ve erişilebilir SVG görselleştirme',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('charts'),
+    },
+    {
+      id: 'jump-files',
+      title: 'Dosya Yükleme (Dropzone)',
+      description: 'Sürükle bırak dosya yükleme ve doğrulama',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('files'),
+    },
+    {
+      id: 'jump-enterprise',
+      title: 'Kurumsal Altyapı & Yetenekler (Enterprise Stack)',
+      description: 'PostHog Analytics, i18n, Feature Flags ve Web Vitals',
+      group: 'Playground Sekmeleri',
+      onSelect: () => jumpToTab('enterprise'),
     },
     {
       id: 'jump-howto',
@@ -97,7 +155,7 @@ export function WelcomePage({
     {
       id: 'cmd-copy-check',
       title: 'Kalite Kontrol Komutunu Kopyala (pnpm check)',
-      description: 'Tüm statik kapıları çalıştırır',
+      description: 'Tüm statik kapıları ve testleri çalıştırır',
       group: 'Hızlı Eylemler',
       onSelect: () => {
         navigator.clipboard.writeText('pnpm check')
@@ -178,8 +236,9 @@ export function WelcomePage({
           <Button
             variant="outline"
             size="sm"
-            className="hidden h-9 items-center gap-2 text-xs text-muted-foreground sm:inline-flex"
+            className="hidden h-9 items-center gap-2 text-xs text-muted-foreground sm:inline-flex cursor-pointer"
             onClick={() => setPaletteOpen(true)}
+            aria-label="Komut arama paletini aç"
           >
             <Command className="size-3.5" />
             <span>Ara...</span>
@@ -221,28 +280,28 @@ export function WelcomePage({
 
         {/* Key Stats Ribbon */}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 max-w-3xl">
-          <div className="rounded-xl border border-border/60 p-3 bg-card/60">
+          <div className="rounded-xl border border-border/60 p-3 bg-card/60 transition-all hover:border-primary/40">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="size-4 text-green-500" />
               <span>Sıfır Backend</span>
             </div>
             <div className="mt-1 text-lg font-bold">100% Bağımsız</div>
           </div>
-          <div className="rounded-xl border border-border/60 p-3 bg-card/60">
+          <div className="rounded-xl border border-border/60 p-3 bg-card/60 transition-all hover:border-primary/40">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Zap className="size-4 text-amber-500" />
               <span>Initial JS Closure</span>
             </div>
-            <div className="mt-1 text-lg font-bold">176 KiB Gzip</div>
+            <div className="mt-1 text-lg font-bold">182 KiB Gzip</div>
           </div>
-          <div className="rounded-xl border border-border/60 p-3 bg-card/60">
+          <div className="rounded-xl border border-border/60 p-3 bg-card/60 transition-all hover:border-primary/40">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Box className="size-4 text-primary" />
               <span>UI Primitives</span>
             </div>
-            <div className="mt-1 text-lg font-bold">20+ Bileşen</div>
+            <div className="mt-1 text-lg font-bold">35+ Bileşen</div>
           </div>
-          <div className="rounded-xl border border-border/60 p-3 bg-card/60">
+          <div className="rounded-xl border border-border/60 p-3 bg-card/60 transition-all hover:border-primary/40">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Globe2 className="size-4 text-blue-500" />
               <span>Çoklu Dil (i18n)</span>
@@ -282,7 +341,10 @@ export function WelcomePage({
             </div>
           }
         >
-          <PlaygroundSection />
+          <PlaygroundSection
+            activeTab={playgroundTab}
+            onTabChange={setPlaygroundTab}
+          />
         </Suspense>
 
         {/* 3. MAKE IT YOURS (01 / 02 / 03 STEPS) */}
