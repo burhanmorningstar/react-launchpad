@@ -1,0 +1,13 @@
+﻿.devtools/
+graphify-out/
+.agents/
+.env
+.env.*
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+storybook-static/
+public/mockServiceWorker.js
+pnpm-lock.yaml

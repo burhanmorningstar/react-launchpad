@@ -83,6 +83,17 @@ const defaultLoaders = import.meta.glob('./locales/*/*.json') as Record<
   NamespaceModuleLoader
 >
 
+export function getAvailableNamespaces(): string[] {
+  const nsSet = new Set<string>()
+  for (const p of Object.keys(defaultLoaders)) {
+    const match = /\/([^/]+)\.json$/.exec(p)
+    if (match && !match[1].startsWith('_')) {
+      nsSet.add(match[1])
+    }
+  }
+  return Array.from(nsSet)
+}
+
 let defaultNamespaceLoader = createNamespaceLoader(defaultLoaders)
 
 export function setI18nInstanceForLoader(i18n: I18nInstance) {

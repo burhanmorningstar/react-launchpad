@@ -23,6 +23,12 @@ export function removeExamples({
   const { directories, files } = manifest.examples
   const allTargets = [...directories, ...files]
 
+  const i18nPath = path.resolve(rootDir, 'src/i18n/index.ts')
+  const i18nHasLegacyExamples =
+    existsSync(i18nPath) &&
+    (readFileSync(i18nPath, 'utf8').includes('enExamples') ||
+      readFileSync(i18nPath, 'utf8').includes('examples:'))
+
   if (dryRun) {
     logger.log('\n[DRY RUN] remove-examples would perform the following actions:')
     for (const dir of directories) {
@@ -31,7 +37,9 @@ export function removeExamples({
     for (const file of files) {
       logger.log(`  - REMOVE FILE      ${file}`)
     }
-    logger.log(`  ~ UPDATE           src/i18n/index.ts (remove examples imports & resources)`)
+    if (i18nHasLegacyExamples) {
+      logger.log(`  ~ UPDATE           src/i18n/index.ts (remove examples imports & resources)`)
+    }
     logger.log(`  ~ UPDATE           project.config.json (set examples.enabled to false)`)
     return {
       success: true,
@@ -56,9 +64,8 @@ export function removeExamples({
     }
   }
 
-  // 3. Update src/i18n/index.ts
-  const i18nPath = path.resolve(rootDir, 'src/i18n/index.ts')
-  if (existsSync(i18nPath)) {
+  // 3. Update src/i18n/index.ts only if legacy static imports are present
+  if (i18nHasLegacyExamples) {
     let content = readFileSync(i18nPath, 'utf8')
     // Remove example imports
     content = content.replace(/import\s+enExamples\s+from\s+['"].*?examples\.json['"]\s*\r?\n/g, '')

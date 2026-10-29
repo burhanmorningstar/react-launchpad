@@ -4,32 +4,30 @@ import { initReactI18next } from 'react-i18next'
 import { projectConfig } from '@/config/project'
 
 import { setI18nInstanceForLoader } from './loadNamespace'
-import enCommon from './locales/en/common.json'
-import enExamples from './locales/en/examples.json'
-import enUsers from './locales/en/users.json'
-import enValidation from './locales/en/validation.json'
-import trCommon from './locales/tr/common.json'
-import trExamples from './locales/tr/examples.json'
-import trUsers from './locales/tr/users.json'
-import trValidation from './locales/tr/validation.json'
 import { getLocaleMetadata, resolveLocalePreference } from './registry'
 
 export const defaultNS = 'common'
 
-export const resources = {
-  en: {
-    common: enCommon,
-    examples: enExamples,
-    users: enUsers,
-    validation: enValidation,
-  },
-  tr: {
-    common: trCommon,
-    examples: trExamples,
-    users: trUsers,
-    validation: trValidation,
-  },
-} as const
+// Auto-discover all locale JSON modules dynamically via Vite glob
+const localeModules = import.meta.glob('./locales/*/*.json', {
+  eager: true,
+}) as Record<string, { default: Record<string, unknown> }>
+
+function buildResources() {
+  const res: Record<string, Record<string, Record<string, unknown>>> = {}
+  for (const [filePath, mod] of Object.entries(localeModules)) {
+    const match = /\.\/locales\/([^/]+)\/([^/]+)\.json$/.exec(filePath)
+    if (match) {
+      const [, lang, ns] = match
+      if (ns.startsWith('_')) continue
+      if (!res[lang]) res[lang] = {}
+      res[lang][ns] = mod.default || mod
+    }
+  }
+  return res
+}
+
+export const resources = buildResources()
 
 // Resolve initial locale preference safely
 let initialLocale = projectConfig.defaultLocale

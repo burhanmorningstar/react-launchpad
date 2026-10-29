@@ -109,13 +109,15 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
-  // Disable react-refresh/only-export-components for context files and files that export both components and utilities
+  // Disable react-refresh/only-export-components for context/provider files and UI primitives that export CVA variants
   {
     files: [
       'src/**/context.tsx',
       'src/**/*Context.tsx',
-      'src/core/ui/components/Toast.tsx',
-      'src/core/ui/components/Breadcrumbs.tsx',
+      'src/app/providers/QueryProvider.tsx',
+      'src/core/ui/components/**/*.tsx',
+      'src/core/forms/FieldArray.tsx',
+      'src/core/forms/FormStepper.tsx',
     ],
     rules: {
       'react-refresh/only-export-components': 'off',
